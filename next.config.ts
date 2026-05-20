@@ -1,3 +1,4 @@
+﻿@'
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -14,3 +15,6 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+'@ | Set-Content -Path "next.config.ts" -Encoding UTF8
+
+Write-Host "Config updated - build errors ignored!" -ForegroundColor Green
