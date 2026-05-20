@@ -1,51 +1,38 @@
+"use client";
+
 import { forwardRef } from "react";
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { motion } from "framer-motion";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
+  variant?: "primary" | "secondary" | "ghost" | "danger" | "success";
   size?: "sm" | "md" | "lg";
-  isLoading?: boolean;
-  href?: string;
+  loading?: boolean;
+  icon?: React.ReactNode;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "md", isLoading, children, ...props }, ref) => {
-    const baseStyles = "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0";
-    
+  ({ variant = "primary", size = "md", loading, icon, children, className = "", ...props }, ref) => {
+    const base = "inline-flex items-center justify-center gap-2 font-semibold rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95";
     const variants = {
-      primary: "bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 hover:from-primary-700 hover:to-primary-800",
-      secondary: "bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-lg shadow-gray-900/25 hover:shadow-gray-900/40",
-      outline: "border-2 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400",
-      ghost: "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800",
-      danger: "bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-500/25 hover:shadow-red-500/40",
+      primary: "bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-xl shadow-gray-900/10 dark:shadow-white/5 hover:shadow-2xl hover:scale-[1.02]",
+      secondary: "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700",
+      ghost: "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800",
+      danger: "bg-red-600 text-white shadow-xl shadow-red-500/20 hover:bg-red-700",
+      success: "bg-emerald-600 text-white shadow-xl shadow-emerald-500/20 hover:bg-emerald-700",
     };
-
-    const sizes = {
-      sm: "px-4 py-2 text-sm gap-2",
-      md: "px-6 py-3 text-base gap-2",
-      lg: "px-8 py-4 text-lg gap-3",
-    };
+    const sizes = { sm: "px-4 py-2 text-[13px] rounded-xl", md: "px-5 py-2.5 text-sm rounded-2xl", lg: "px-6 py-3.5 text-[15px] rounded-2xl" };
 
     return (
-      <button
-        ref={ref}
-        className={twMerge(clsx(baseStyles, variants[variant], sizes[size], className))}
-        disabled={isLoading}
-        {...props}
-      >
-        {isLoading && (
-          <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-          </svg>
-        )}
+      <motion.button ref={ref as any} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.97 }}
+        className={base + " " + variants[variant] + " " + sizes[size] + " " + className}
+        disabled={loading || props.disabled} {...props}>
+        {loading ? (
+          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+        ) : icon}
         {children}
-      </button>
+      </motion.button>
     );
   }
 );
-
 Button.displayName = "Button";
-
 export default Button;
