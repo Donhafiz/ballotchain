@@ -1,77 +1,93 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
-
-const footerLinks = {
-  Platform: [
-    { name: "Elections", href: "/dashboard/elections" },
-    { name: "Real-Time Results", href: "/dashboard/results" },
-    { name: "Voter Management", href: "/dashboard/voters" },
-    { name: "Analytics", href: "/dashboard/reports" },
-    { name: "API Documentation", href: "/docs" },
-  ],
-  Solutions: [
-    { name: "Government", href: "/solutions/government" },
-    { name: "Enterprise", href: "/solutions/enterprise" },
-    { name: "Education", href: "/solutions/education" },
-    { name: "Nonprofits", href: "/solutions/nonprofits" },
-    { name: "Healthcare", href: "/solutions/healthcare" },
-  ],
-  Company: [
-    { name: "About", href: "/about" },
-    { name: "Blog", href: "/blog" },
-    { name: "Careers", href: "/careers" },
-    { name: "Press", href: "/press" },
-    { name: "Contact", href: "/contact" },
-  ],
-  Legal: [
-    { name: "Privacy Policy", href: "/privacy" },
-    { name: "Terms of Service", href: "/terms" },
-    { name: "Security", href: "/security" },
-    { name: "Compliance", href: "/compliance" },
-    { name: "GDPR", href: "/gdpr" },
-  ],
-};
 
 export default function Footer() {
-  return (
-    <footer className="relative bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
-      {/* Gradient line */}
-      <div className="h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600" />
+  const footerLinks = [
+    {
+      title: "Platform",
+      links: [
+        { label: "Elections", href: "/dashboard/elections" },
+        { label: "Live Results", href: "/dashboard/results" },
+        { label: "Voter Management", href: "/dashboard/voters" },
+        { label: "Analytics", href: "/dashboard/reports" },
+        { label: "API", href: "/docs" },
+      ],
+    },
+    {
+      title: "Solutions",
+      links: [
+        { label: "Government", href: "/solutions/government" },
+        { label: "Enterprise", href: "/solutions/enterprise" },
+        { label: "Education", href: "/solutions/education" },
+        { label: "Nonprofits", href: "/solutions/nonprofits" },
+      ],
+    },
+    {
+      title: "Company",
+      links: [
+        { label: "About", href: "/about" },
+        { label: "Blog", href: "/blog" },
+        { label: "Careers", href: "/careers" },
+        { label: "Press", href: "/press" },
+        { label: "Contact", href: "/contact" },
+      ],
+    },
+    {
+      title: "Legal",
+      links: [
+        { label: "Privacy Policy", href: "/privacy" },
+        { label: "Terms of Service", href: "/terms" },
+        { label: "Security", href: "/security" },
+        { label: "Compliance", href: "/compliance" },
+        { label: "GDPR", href: "/gdpr" },
+      ],
+    },
+  ];
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-20">
-        {/* Top */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10 lg:gap-16">
-          {/* Brand */}
-          <div className="col-span-2 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-3 mb-6 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-xl shadow-purple-500/30 group-hover:shadow-purple-500/50 transition-all duration-300">
-                <span className="text-white font-black text-lg">B</span>
-              </div>
-              <span className="text-xl font-extrabold text-gray-900 dark:text-white">
-                Ballot<span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Chain</span>
-              </span>
+  return (
+    <footer style={{ background: "linear-gradient(180deg, rgba(10,10,20,0.98), rgba(10,10,20,0.95))", borderTop: "1px solid rgba(255,255,255,0.06)", position: "relative", zIndex: 10 }}>
+      {/* Gradient accent line */}
+      <div style={{ height: 2, background: "linear-gradient(90deg, #6366F1, #8B5CF6, #A855F7, #EC4899)" }} />
+
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "60px 32px 40px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: 40 }}>
+          {/* Brand Column */}
+          <div>
+            <Link href="/home" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", marginBottom: 20 }}>
+              <div className="btn-purple" style={{ width: 38, height: 38, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#fff", flexShrink: 0 }}>BC</div>
+              <span className="syne" style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>Ballot<span style={{ color: "#818CF8" }}>Chain</span></span>
             </Link>
-            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-6">
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", lineHeight: 1.7, marginBottom: 24, maxWidth: 280 }}>
               The world&apos;s most advanced voting platform. Enterprise-grade security, blockchain verification, and AI-powered fraud detection.
             </p>
-            <div className="flex items-center gap-3">
-              {["🐦", "💻", "💼", "📧"].map((icon, i) => (
-                <a key={i} href="#" className="w-9 h-9 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-sm hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all hover:scale-110">{icon}</a>
+            <div style={{ display: "flex", gap: 8 }}>
+              {[
+                { icon: "X", href: "#" },
+                { icon: "GH", href: "#" },
+                { icon: "LI", href: "#" },
+                { icon: "EM", href: "#" },
+              ].map((s, i) => (
+                <a key={i} href={s.href} style={{ width: 34, height: 34, borderRadius: 10, border: "0.5px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.4)", textDecoration: "none", transition: "all 0.2s" }}
+                  onMouseEnter={(e) => { (e.target as HTMLElement).style.borderColor = "rgba(99,102,241,0.4)"; (e.target as HTMLElement).style.color = "#818CF8"; }}
+                  onMouseLeave={(e) => { (e.target as HTMLElement).style.borderColor = "rgba(255,255,255,0.1)"; (e.target as HTMLElement).style.color = "rgba(255,255,255,0.4)"; }}>
+                  {s.icon}
+                </a>
               ))}
             </div>
           </div>
 
-          {/* Links */}
-          {Object.entries(footerLinks).map(([title, links]) => (
-            <div key={title}>
-              <h4 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-5">{title}</h4>
-              <ul className="space-y-3">
-                {links.map((link) => (
-                  <li key={link.name}>
-                    <Link href={link.href} className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">
-                      {link.name}
+          {/* Link Columns */}
+          {footerLinks.map((col, i) => (
+            <div key={i}>
+              <h4 className="syne" style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", marginBottom: 20 }}>{col.title}</h4>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 10 }}>
+                {col.links.map((link, j) => (
+                  <li key={j}>
+                    <Link href={link.href} style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", textDecoration: "none", transition: "color 0.2s" }}
+                      onMouseEnter={(e) => (e.target as HTMLElement).style.color = "#fff"}
+                      onMouseLeave={(e) => (e.target as HTMLElement).style.color = "rgba(255,255,255,0.45)"}>
+                      {link.label}
                     </Link>
                   </li>
                 ))}
@@ -80,17 +96,14 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Bottom */}
-        <div className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-400 dark:text-gray-500">
-            &copy; {new Date().getFullYear()} BallotChain. All rights reserved. Built for free and fair elections worldwide.
-          </p>
-          <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500">
-            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500" /> SOC 2 Type II Certified</span>
-            <span className="mx-2">·</span>
-            <span>99.99% Uptime SLA</span>
-            <span className="mx-2">·</span>
+        {/* Bottom Bar */}
+        <div style={{ marginTop: 48, paddingTop: 28, borderTop: "0.5px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>&copy; 2026 BallotChain. All rights reserved. Built for free and fair elections worldwide.</p>
+          <div style={{ display: "flex", gap: 16, fontSize: 11, color: "rgba(255,255,255,0.25)" }}>
+            <span style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22C55E" }} /> SOC 2 Type II</span>
             <span>ISO 27001</span>
+            <span>99.99% Uptime SLA</span>
+            <span>GDPR Compliant</span>
           </div>
         </div>
       </div>

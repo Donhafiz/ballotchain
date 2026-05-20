@@ -2,159 +2,113 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import Confetti from "@/components/magic/Confetti";
 
 export default function VotePage() {
   const { electionId } = useParams();
   const router = useRouter();
   const [election, setElection] = useState<any>(null);
-  const [selectedCandidate, setSelectedCandidate] = useState<string | null>(null);
-  const [step, setStep] = useState(1); // 1=select, 2=confirm, 3=success
-  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [receipt, setReceipt] = useState("");
 
   useEffect(() => {
-    fetchElection();
+    fetch("/api/elections/" + electionId, { headers: { Authorization: "Bearer " + localStorage.getItem("token") } })
+      .then(r => r.json()).then(d => setElection(d.election || d)).finally(() => setLoading(false));
   }, [electionId]);
 
-  const fetchElection = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("/api/elections/" + electionId, {
-        headers: { Authorization: "Bearer " + token },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setElection(data.election || data);
-      }
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
-  };
-
-  const handleSubmitVote = async () => {
-    if (!selectedCandidate) return;
+  const handleVote = async () => {
+    if (!selected) return;
     setSubmitting(true);
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("/api/elections/" + electionId + "/votes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
-        body: JSON.stringify({ candidateId: selectedCandidate }),
-      });
-      if (res.ok) {
-        setStep(3);
-      }
-    } catch (err) { console.error(err); }
-    finally { setSubmitting(false); }
+    const res = await fetch("/api/elections/" + electionId + "/votes", {
+      method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + localStorage.getItem("token") },
+      body: JSON.stringify({ candidateId: selected }),
+    });
+    if (res.ok) { 
+      setReceipt("0x" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)); 
+      setStep(3); 
+      setShowConfetti(true); 
+    }
+    setSubmitting(false);
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" /></div>;
-  if (!election) return <div className="min-h-screen flex items-center justify-center text-gray-500">Election not found</div>;
+  if (loading) return <div style={{ minHeight: "100vh", background: "#0a0a14", display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ width: 32, height: 32, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.1)", borderTopColor: "#6366F1", animation: "spin 0.8s linear infinite" }} /></div>;
+  if (!election) return <div style={{ minHeight: "100vh", background: "#0a0a14", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.4)" }}>Election not found</div>;
 
-  const selectedCandidateData = election.candidates?.find((c: any) => c._id === selectedCandidate);
+  const selectedCandidate = election.candidates?.find((c: any) => c._id === selected);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-12 px-4">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-purple-500/25">
-            <span className="text-white text-2xl">🗳️</span>
-          </div>
-          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">{election.title}</h1>
-          <p className="text-gray-500 mt-2">{election.description}</p>
-          <div className="flex items-center justify-center gap-4 mt-4">
-            <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-full text-sm font-bold">🟢 Active</span>
-            <span className="text-sm text-gray-500">{election.type?.replace("_", " ")}</span>
-          </div>
+    <div style={{ minHeight: "100vh", background: "#0a0a14", padding: "40px 20px" }}>
+      <Confetti active={showConfetti} />
+      <div style={{ maxWidth: 650, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 40 }}>
+          <div className="btn-purple" style={{ width: 56, height: 56, borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", fontSize: 24 }}>🗳️</div>
+          <h1 className="syne" style={{ fontSize: 22, fontWeight: 700, color: "#fff" }}>{election.title}</h1>
+          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginTop: 6 }}>{election.description}</p>
+          <span className="badge-emerald" style={{ display: "inline-block", marginTop: 10, fontSize: 11 }}>Active</span>
         </div>
 
-        {/* Step Indicator */}
-        <div className="flex items-center justify-center gap-3 mb-10">
-          {[1, 2, 3].map((s) => (
-            <div key={s} className="flex items-center gap-3">
-              <div className={"w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all " + (step >= s ? "bg-blue-600 text-white shadow-lg shadow-blue-500/25" : "bg-gray-200 dark:bg-gray-700 text-gray-500")}>
-                {step > s ? "✓" : s}
-              </div>
-              {s < 3 && <div className={"w-12 h-0.5 " + (step > s ? "bg-blue-600" : "bg-gray-200 dark:bg-gray-700")} />}
+        <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 32 }}>
+          {["Select","Confirm","Done"].map((s, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ width: 30, height: 30, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, background: step > i+1 ? "#22C55E" : step === i+1 ? "linear-gradient(135deg,#6366F1,#8B5CF6)" : "rgba(255,255,255,0.06)", color: step >= i+1 ? "#fff" : "rgba(255,255,255,0.3)" }}>{step > i+1 ? "OK" : i+1}</div>
+              <span style={{ fontSize: 11, color: step >= i+1 ? "#fff" : "rgba(255,255,255,0.3)", fontWeight: 500 }}>{s}</span>
+              {i < 2 && <div style={{ width: 40, height: 1, background: step > i+1 ? "#22C55E" : "rgba(255,255,255,0.06)" }} />}
             </div>
           ))}
         </div>
 
-        {/* Step 1: Select Candidate */}
         {step === 1 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 text-center">Select Your Candidate</h2>
-            <div className="grid gap-4">
-              {election.candidates?.map((candidate: any) => (
-                <motion.div
-                  key={candidate._id}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setSelectedCandidate(candidate._id)}
-                  className={"p-6 rounded-2xl border-2 cursor-pointer transition-all " + (selectedCandidate === candidate._id ? "border-blue-500 bg-blue-50 dark:bg-blue-950 shadow-xl shadow-blue-500/20" : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-blue-300")}>
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
-                      {candidate.name?.[0]}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">{candidate.name}</h3>
-                      <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">{candidate.position}</p>
-                      <p className="text-sm text-gray-500 mt-1">{candidate.description}</p>
-                    </div>
-                    <div className={"w-6 h-6 rounded-full border-2 flex items-center justify-center " + (selectedCandidate === candidate._id ? "border-blue-600 bg-blue-600" : "border-gray-300")}>
-                      {selectedCandidate === candidate._id && <span className="text-white text-xs">✓</span>}
-                    </div>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 600, color: "#fff", marginBottom: 16, textAlign: "center" }}>Select Your Candidate</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {election.candidates?.map((c: any) => (
+                <motion.div key={c._id} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={() => setSelected(c._id)}
+                  style={{ padding: 18, borderRadius: 14, border: "1px solid", borderColor: selected === c._id ? "#6366F1" : "rgba(255,255,255,0.07)", background: selected === c._id ? "rgba(99,102,241,0.08)" : "rgba(255,255,255,0.02)", cursor: "pointer", display: "flex", alignItems: "center", gap: 14 }}>
+                  <div className="btn-purple" style={{ width: 44, height: 44, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 700, flexShrink: 0 }}>{c.name?.[0]}</div>
+                  <div style={{ flex: 1 }}><div style={{ fontSize: 15, fontWeight: 600, color: "#fff" }}>{c.name}</div><div style={{ fontSize: 12, color: "#818CF8" }}>{c.position}</div></div>
+                  <div style={{ width: 22, height: 22, borderRadius: "50%", border: "2px solid", borderColor: selected === c._id ? "#6366F1" : "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", background: selected === c._id ? "#6366F1" : "transparent" }}>
+                    {selected === c._id && <span style={{ color: "#fff", fontSize: 11 }}>OK</span>}
                   </div>
                 </motion.div>
               ))}
             </div>
-            <div className="flex justify-center mt-8">
-              <button onClick={() => setStep(2)} disabled={!selectedCandidate}
-                className="px-10 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg rounded-2xl shadow-xl shadow-purple-500/25 hover:shadow-purple-500/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                Continue to Review →
-              </button>
+            <div style={{ textAlign: "center", marginTop: 24 }}>
+              <button onClick={() => setStep(2)} disabled={!selected} className="btn-blue" style={{ padding: "12px 32px", borderRadius: 12, fontSize: 14, fontWeight: 600, color: "#fff", border: "none", cursor: selected ? "pointer" : "not-allowed", opacity: selected ? 1 : 0.4 }}>Continue</button>
             </div>
           </motion.div>
         )}
 
-        {/* Step 2: Confirm Vote */}
-        {step === 2 && selectedCandidateData && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center space-y-6">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Confirm Your Vote</h2>
-            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-8 max-w-md mx-auto">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-3xl mx-auto mb-4">
-                {selectedCandidateData.name?.[0]}
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{selectedCandidateData.name}</h3>
-              <p className="text-blue-600 dark:text-blue-400 font-medium">{selectedCandidateData.position}</p>
-              <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-950 rounded-xl text-sm text-yellow-700 dark:text-yellow-300">
-                ⚠️ Your vote is final and cannot be changed once submitted.
-              </div>
+        {step === 2 && selectedCandidate && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: "center" }}>
+            <h3 style={{ fontSize: 16, fontWeight: 600, color: "#fff", marginBottom: 20 }}>Confirm Your Vote</h3>
+            <div className="glass rounded-2xl p-8" style={{ maxWidth: 350, margin: "0 auto 24px" }}>
+              <div className="btn-purple" style={{ width: 56, height: 56, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, fontWeight: 700, margin: "0 auto 12px" }}>{selectedCandidate.name?.[0]}</div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>{selectedCandidate.name}</div>
+              <div style={{ fontSize: 13, color: "#818CF8", marginTop: 4 }}>{selectedCandidate.position}</div>
+              <div style={{ marginTop: 16, padding: "10px 14px", borderRadius: 8, background: "rgba(245,158,11,0.08)", border: "0.5px solid rgba(245,158,11,0.2)", fontSize: 12, color: "rgba(245,158,11,0.9)" }}>Your vote is final and cannot be changed.</div>
             </div>
-            <div className="flex justify-center gap-4">
-              <button onClick={() => setStep(1)} className="px-8 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-200">← Change</button>
-              <button onClick={handleSubmitVote} disabled={submitting}
-                className="px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold rounded-xl shadow-xl shadow-green-500/25 hover:shadow-green-500/40 transition-all disabled:opacity-60">
-                {submitting ? "Submitting..." : "✅ Confirm My Vote"}
-              </button>
+            <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
+              <button onClick={() => setStep(1)} className="btn-outline" style={{ padding: "10px 20px", borderRadius: 10, border: "0.5px solid rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.03)", color: "rgba(255,255,255,0.6)", fontWeight: 600, cursor: "pointer" }}>Change</button>
+              <button onClick={handleVote} disabled={submitting} className="btn-emerald" style={{ padding: "10px 24px", borderRadius: 10, background: "linear-gradient(135deg,#059669,#10b981)", border: "none", color: "#fff", fontWeight: 600, cursor: "pointer" }}>{submitting ? "Submitting..." : "Confirm Vote"}</button>
             </div>
           </motion.div>
         )}
 
-        {/* Step 3: Success */}
         {step === 3 && (
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center space-y-6">
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200 }} className="text-7xl">🎉</motion.div>
-            <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white">Vote Submitted Successfully!</h2>
-            <p className="text-gray-500 max-w-md mx-auto">Your vote for <strong>{selectedCandidateData?.name}</strong> has been securely recorded on the blockchain.</p>
-            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 max-w-sm mx-auto">
-              <p className="text-sm text-gray-500 mb-2">Vote Receipt</p>
-              <p className="font-mono text-xs text-gray-400 break-all">0x{Math.random().toString(36).substring(2, 15)}...{Math.random().toString(36).substring(2, 15)}</p>
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ textAlign: "center" }}>
+            <div style={{ fontSize: 60, marginBottom: 16 }}>🎉</div>
+            <h2 className="syne" style={{ fontSize: 22, fontWeight: 700, color: "#fff", marginBottom: 8 }}>Vote Submitted!</h2>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", marginBottom: 20 }}>Your vote has been securely recorded.</p>
+            <div className="glass rounded-xl p-4" style={{ maxWidth: 350, margin: "0 auto 24px" }}>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", marginBottom: 4 }}>Receipt</div>
+              <div style={{ fontSize: 11, fontFamily: "monospace", color: "rgba(255,255,255,0.5)", wordBreak: "break-all" }}>{receipt}</div>
             </div>
-            <button onClick={() => router.push("/voter")} className="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors">
-              Back to Dashboard
-            </button>
+            <button onClick={() => router.push("/voter")} className="btn-blue" style={{ padding: "12px 28px", borderRadius: 12, fontSize: 14, fontWeight: 600, color: "#fff", border: "none", cursor: "pointer" }}>Back to Dashboard</button>
           </motion.div>
         )}
       </div>

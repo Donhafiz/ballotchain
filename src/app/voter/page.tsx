@@ -1,103 +1,89 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 
 export default function VoterDashboard() {
-  const [activeElections] = useState([
-    { id: "1", title: "Student Council President 2026", deadline: "May 30, 2026", status: "active", voted: false, candidates: 4 },
-    { id: "2", title: "Department Representative", deadline: "June 15, 2026", status: "upcoming", voted: false, candidates: 3 },
-    { id: "3", title: "Faculty Senate Elections", deadline: "April 20, 2026", status: "closed", voted: true, candidates: 6 },
-  ]);
+  const [elections, setElections] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/elections", { headers: { Authorization: "Bearer " + localStorage.getItem("token") } })
+      .then(r => r.json()).then(d => setElections(d.elections || [])).finally(() => setLoading(false));
+  }, []);
+
+  const active = elections.filter(e => e.status === "active");
+  const voted = elections.filter(e => e.status === "completed");
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-40">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">B</span>
-            </div>
-            <span className="font-bold text-gray-900 dark:text-white">BallotChain</span>
-          </Link>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500 dark:text-gray-400">👤 John Doe</span>
-            <Link href="/login" className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">Sign Out</Link>
-          </div>
+    <div style={{ minHeight: "100vh", background: "#0a0a14" }}>
+      {/* Header */}
+      <header style={{ borderBottom: "0.5px solid rgba(255,255,255,0.06)", padding: "0 32px", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(10,10,20,0.9)", backdropFilter: "blur(20px)", position: "sticky", top: 0, zIndex: 40 }}>
+        <Link href="/home" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
+          <div className="btn-purple" style={{ width: 30, height: 30, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#fff" }}>BC</div>
+          <span className="syne" style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>BallotChain</span>
+        </Link>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <Link href="/voter/my-votes" style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", textDecoration: "none" }}>My History</Link>
+          <Link href="/login" style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", textDecoration: "none" }}>Sign Out</Link>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-8 space-y-8">
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">My Voting Dashboard</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">Cast your vote in active elections</p>
-        </motion.div>
+      <div style={{ maxWidth: 800, margin: "0 auto", padding: "40px 24px" }}>
+        <h1 className="syne" style={{ fontSize: 28, fontWeight: 700, color: "#fff", marginBottom: 8 }}>My Voting Dashboard</h1>
+        <p style={{ fontSize: 14, color: "rgba(255,255,255,0.4)", marginBottom: 32 }}>Cast your vote in active elections and track your history.</p>
 
-        {/* Active Elections */}
-        <div>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Active Elections</h2>
-          <div className="space-y-4">
-            {activeElections.filter((e) => e.status === "active").map((election, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-                className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center text-2xl">🗳️</div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 dark:text-white">{election.title}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{election.candidates} candidates · Deadline: {election.deadline}</p>
-                  </div>
+        {loading ? (
+          <div style={{ textAlign: "center", padding: 60 }}><div style={{ width: 32, height: 32, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.1)", borderTopColor: "#6366F1", animation: "spin 0.8s linear infinite", margin: "0 auto" }} /></div>
+        ) : (
+          <>
+            {/* Active Elections */}
+            <div style={{ marginBottom: 32 }}>
+              <h2 className="syne" style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16 }}>🟢 Active Elections ({active.length})</h2>
+              {active.length === 0 ? (
+                <div className="glass rounded-2xl p-8 text-center" style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>No active elections at the moment.</div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {active.map(e => (
+                    <Link key={e._id} href={"/voter/elections/" + e._id + "/vote"} style={{ textDecoration: "none" }}>
+                      <div className="glass rounded-2xl p-6 card-hover" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                          <div className="btn-blue" style={{ width: 40, height: 40, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>🗳️</div>
+                          <div>
+                            <div style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>{e.title}</div>
+                            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>{e.candidates?.length || 0} candidates · Ends {new Date(e.endDate).toLocaleDateString()}</div>
+                          </div>
+                        </div>
+                        <span className="btn-purple" style={{ padding: "8px 16px", borderRadius: 10, fontSize: 12, fontWeight: 600, color: "#fff", whiteSpace: "nowrap" }}>Vote Now →</span>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-full text-xs font-bold">🟢 Active</span>
-                  <Link href={"/voter/elections/" + election.id + "/vote"}
-                    className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all hover:scale-105">
-                    Vote Now →
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
+              )}
+            </div>
 
-        {/* Upcoming */}
-        <div>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Upcoming Elections</h2>
-          <div className="space-y-4">
-            {activeElections.filter((e) => e.status === "upcoming").map((election, i) => (
-              <div key={i} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 flex items-center justify-between opacity-70">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-2xl">📅</div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 dark:text-white">{election.title}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Starts {election.deadline} · {election.candidates} candidates</p>
-                  </div>
-                </div>
-                <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full text-xs font-bold">🔵 Upcoming</span>
+            {/* Voting History */}
+            <div>
+              <h2 className="syne" style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16 }}>📋 Voting History</h2>
+              <div className="glass rounded-2xl overflow-hidden">
+                {voted.length === 0 ? (
+                  <div style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.4)", fontSize: 13 }}>No voting history yet.</div>
+                ) : (
+                  voted.map(e => (
+                    <div key={e._id} style={{ padding: "14px 20px", borderBottom: "0.5px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>{e.title}</div>
+                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", marginTop: 2 }}>Completed · {new Date(e.endDate).toLocaleDateString()}</div>
+                      </div>
+                      <span className="badge-emerald" style={{ fontSize: 10, fontWeight: 600, padding: "3px 10px", borderRadius: 100 }}>Voted ✓</span>
+                    </div>
+                  ))
+                )}
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Voting History */}
-        <div>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Voting History</h2>
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl divide-y divide-gray-200 dark:divide-gray-800">
-            {activeElections.filter((e) => e.status === "closed").map((election, i) => (
-              <div key={i} className="p-6 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center text-lg">✅</div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">{election.title}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Voted · {election.deadline}</p>
-                  </div>
-                </div>
-                <span className="text-sm text-gray-500 dark:text-gray-400">Receipt: #VOTE-{election.id}-2026</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </main>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
