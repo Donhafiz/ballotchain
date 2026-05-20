@@ -1,0 +1,434 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--color-background-tertiary);color:var(--color-text-primary)}
+.dash{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.sidebar{background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;padding:0}
+.sb-logo{padding:20px 20px 16px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:10px}
+.sb-logo-icon{width:32px;height:32px;background:#185FA5;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#E6F1FB;font-size:16px;flex-shrink:0}
+.sb-logo-text{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.sb-logo-sub{font-size:11px;color:var(--color-text-secondary)}
+.sb-section{padding:12px 12px 4px;font-size:10px;font-weight:500;color:var(--color-text-tertiary);letter-spacing:.06em;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--border-radius-md);margin:1px 8px;cursor:pointer;font-size:13px;color:var(--color-text-secondary);transition:background .12s}
+.sb-item:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.sb-item.active{background:#E6F1FB;color:#0C447C}
+.sb-item i{font-size:17px;width:20px;text-align:center}
+.sb-badge{margin-left:auto;background:#E24B4A;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:500}
+.sb-item.active .sb-badge{background:#185FA5}
+.sb-footer{margin-top:auto;padding:12px;border-top:0.5px solid var(--color-border-tertiary)}
+.sb-user{display:flex;align-items:center;gap:8px}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:#E6F1FB;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#0C447C;flex-shrink:0}
+.sb-username{font-size:13px;font-weight:500}
+.sb-role{font-size:11px;color:var(--color-text-secondary)}
+.main{display:flex;flex-direction:column;overflow:auto}
+.topbar{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-text-secondary)}
+.topbar-left span{color:var(--color-text-primary);font-weight:500}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.tb-btn{width:34px;height:34px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text-secondary);font-size:17px;transition:background .12s}
+.tb-btn:hover{background:var(--color-background-secondary)}
+.tb-notif{position:relative}
+.tb-dot{width:7px;height:7px;background:#E24B4A;border-radius:50%;position:absolute;top:5px;right:5px;border:1.5px solid var(--color-background-primary)}
+.content{padding:24px;flex:1}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.page-title{font-size:20px;font-weight:500}
+.page-sub{font-size:13px;color:var(--color-text-secondary);margin-top:2px}
+.header-actions{display:flex;gap:8px}
+.btn-primary{display:flex;align-items:center;gap:6px;padding:0 14px;height:34px;border-radius:var(--border-radius-md);background:#185FA5;color:#E6F1FB;font-size:13px;font-weight:500;border:none;cursor:pointer;transition:opacity .12s}
+.btn-primary:hover{opacity:.9}
+.btn-secondary{display:flex;align-items:center;gap:6px;padding:0 14px;height:34px;border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px;font-weight:500;border:0.5px solid var(--color-border-secondary);cursor:pointer;transition:background .12s}
+.btn-secondary:hover{background:var(--color-background-secondary)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px 18px}
+.stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.stat-icon{width:36px;height:36px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;font-size:18px}
+.stat-icon.blue{background:#E6F1FB;color:#185FA5}
+.stat-icon.green{background:#EAF3DE;color:#3B6D11}
+.stat-icon.amber{background:#FAEEDA;color:#854F0B}
+.stat-icon.purple{background:#EEEDFE;color:#534AB7}
+.stat-badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500}
+.stat-badge.up{background:#EAF3DE;color:#3B6D11}
+.stat-badge.neutral{background:#F1EFE8;color:#5F5E5A}
+.stat-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:4px}
+.stat-value{font-size:24px;font-weight:500}
+.stat-sub{font-size:11px;color:var(--color-text-tertiary);margin-top:3px}
+.mid-grid{display:grid;grid-template-columns:1fr 320px;gap:16px;margin-bottom:16px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:18px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:500}
+.card-link{font-size:12px;color:#185FA5;cursor:pointer}
+.chart-wrap{position:relative;width:100%;height:200px}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.election-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.election-row:last-child{border-bottom:none}
+.el-icon{width:34px;height:34px;border-radius:var(--border-radius-md);background:#E6F1FB;display:flex;align-items:center;justify-content:center;color:#185FA5;font-size:17px;flex-shrink:0}
+.el-info{flex:1;min-width:0}
+.el-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.el-meta{font-size:11px;color:var(--color-text-secondary);margin-top:1px}
+.el-right{text-align:right;flex-shrink:0}
+.el-votes{font-size:13px;font-weight:500}
+.el-pct{font-size:11px;color:var(--color-text-secondary)}
+.status-pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500}
+.status-pill.active{background:#EAF3DE;color:#3B6D11}
+.status-pill.scheduled{background:#E6F1FB;color:#0C447C}
+.status-pill.closed{background:#F1EFE8;color:#5F5E5A}
+.status-pill.draft{background:#FAEEDA;color:#854F0B}
+.activity-item{display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.activity-item:last-child{border-bottom:none}
+.act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.act-dot.blue{background:#378ADD}
+.act-dot.green{background:#639922}
+.act-dot.amber{background:#EF9F27}
+.act-dot.red{background:#E24B4A}
+.act-text{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.act-text strong{color:var(--color-text-primary);font-weight:500}
+.act-time{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.quick-btn{display:flex;align-items:center;gap:8px;padding:12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);cursor:pointer;transition:background .12s;text-align:left}
+.quick-btn:hover{background:var(--color-background-secondary)}
+.qb-icon{width:30px;height:30px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.qb-label{font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.qb-sub{font-size:10px;color:var(--color-text-secondary)}
+.progress-bar{height:5px;background:var(--color-background-tertiary);border-radius:3px;overflow:hidden;margin-top:6px}
+.progress-fill{height:100%;border-radius:3px;transition:width .5s}
+.legend-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--color-text-secondary)}
+.legend-swatch{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+</style>
+
+<h2 class="sr-only">Voting Management System admin dashboard with election statistics, charts, recent activity, and quick actions.</h2>
+
+<div class="dash">
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon"><i class="ti ti-building-bank" aria-hidden="true"></i></div>
+      <div>
+        <div class="sb-logo-text">VMS Admin</div>
+        <div class="sb-logo-sub">Tech University</div>
+      </div>
+    </div>
+    <div class="sb-section">Main</div>
+    <div class="sb-item active"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Dashboard<span class="sb-badge">3</span></div>
+    <div class="sb-item"><i class="ti ti-building-bank" aria-hidden="true"></i>Elections</div>
+    <div class="sb-item"><i class="ti ti-users" aria-hidden="true"></i>Voters</div>
+    <div class="sb-item"><i class="ti ti-user-check" aria-hidden="true"></i>Candidates</div>
+    <div class="sb-section">Analytics</div>
+    <div class="sb-item"><i class="ti ti-chart-bar" aria-hidden="true"></i>Reports</div>
+    <div class="sb-item"><i class="ti ti-activity" aria-hidden="true"></i>Activity log</div>
+    <div class="sb-item"><i class="ti ti-file-export" aria-hidden="true"></i>Exports</div>
+    <div class="sb-section">System</div>
+    <div class="sb-item"><i class="ti ti-building" aria-hidden="true"></i>Organizations</div>
+    <div class="sb-item"><i class="ti ti-shield-check" aria-hidden="true"></i>Security</div>
+    <div class="sb-item"><i class="ti ti-settings" aria-hidden="true"></i>Settings</div>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-avatar">SA</div>
+        <div>
+          <div class="sb-username">Super Admin</div>
+          <div class="sb-role">System Administrator</div>
+        </div>
+        <i class="ti ti-dots-vertical" aria-hidden="true" style="margin-left:auto;color:var(--color-text-tertiary);font-size:16px"></i>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <i class="ti ti-home" aria-hidden="true" style="font-size:15px"></i>
+        <i class="ti ti-chevron-right" aria-hidden="true" style="font-size:13px"></i>
+        <span>Dashboard</span>
+      </div>
+      <div class="topbar-right">
+        <div class="tb-btn" title="Search"><i class="ti ti-search" aria-hidden="true"></i></div>
+        <div class="tb-btn tb-notif" title="Notifications"><i class="ti ti-bell" aria-hidden="true"></i><div class="tb-dot"></div></div>
+        <div class="tb-btn" title="Help"><i class="ti ti-help" aria-hidden="true"></i></div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Admin dashboard</div>
+          <div class="page-sub">Monday, 19 May 2026 · 3 active elections running</div>
+        </div>
+        <div class="header-actions">
+          <button class="btn-secondary"><i class="ti ti-download" aria-hidden="true" style="font-size:15px"></i>Export</button>
+          <button class="btn-primary" onclick="sendPrompt('Help me create a new election with all required settings')"><i class="ti ti-plus" aria-hidden="true" style="font-size:15px"></i>New election ↗</button>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon blue"><i class="ti ti-building-bank" aria-hidden="true"></i></div>
+            <span class="stat-badge up">+12%</span>
+          </div>
+          <div class="stat-label">Total elections</div>
+          <div class="stat-value" id="s1">24</div>
+          <div class="stat-sub">3 active · 5 scheduled</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon green"><i class="ti ti-users" aria-hidden="true"></i></div>
+            <span class="stat-badge up">+8.4%</span>
+          </div>
+          <div class="stat-label">Registered voters</div>
+          <div class="stat-value" id="s2">12,847</div>
+          <div class="stat-sub">9,201 verified · 3,646 pending</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon amber"><i class="ti ti-checkup-list" aria-hidden="true"></i></div>
+            <span class="stat-badge up">+23%</span>
+          </div>
+          <div class="stat-label">Votes cast</div>
+          <div class="stat-value" id="s3">8,391</div>
+          <div class="stat-sub">Across all active elections</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon purple"><i class="ti ti-chart-pie" aria-hidden="true"></i></div>
+            <span class="stat-badge neutral">→ 65.3%</span>
+          </div>
+          <div class="stat-label">Avg voter turnout</div>
+          <div class="stat-value" id="s4">65.3%</div>
+          <div class="stat-sub">+4.1% vs last semester</div>
+        </div>
+      </div>
+
+      <div class="mid-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Votes over time (last 7 days)</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="legend-row" style="margin:0">
+                <div class="legend-item"><div class="legend-swatch" style="background:#378ADD"></div>Online</div>
+                <div class="legend-item"><div class="legend-swatch" style="background:#639922"></div>In-person</div>
+              </div>
+            </div>
+          </div>
+          <div class="chart-wrap"><canvas id="lineChart" role="img" aria-label="Line chart showing votes cast over the last 7 days. Online voting peaks mid-week.">Daily votes this week: Mon 320, Tue 480, Wed 710, Thu 590, Fri 830, Sat 420, Sun 610.</canvas></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Election types</div>
+            <span class="card-link">View all</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-item"><div class="legend-swatch" style="background:#378ADD"></div>Single choice 50%</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:#639922"></div>Multiple choice 25%</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:#EF9F27"></div>Ranked 17%</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:#7F77DD"></div>Cumulative 8%</div>
+          </div>
+          <div class="chart-wrap" style="height:160px"><canvas id="donutChart" role="img" aria-label="Donut chart of election types. Single choice 50%, multiple choice 25%, ranked 17%, cumulative 8%.">Election types: single choice 50%, multiple choice 25%, ranked 17%, cumulative 8%.</canvas></div>
+        </div>
+      </div>
+
+      <div class="bottom-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Active elections</div>
+            <span class="card-link" onclick="sendPrompt('Show me all elections and their detailed status')">View all ↗</span>
+          </div>
+          <div class="election-row">
+            <div class="el-icon"><i class="ti ti-crown" aria-hidden="true"></i></div>
+            <div class="el-info">
+              <div class="el-name">Student President Election 2026</div>
+              <div class="el-meta"><span class="status-pill active">Active</span> · Ends 22 May</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:78%;background:#378ADD"></div></div>
+            </div>
+            <div class="el-right">
+              <div class="el-votes">3,847</div>
+              <div class="el-pct">78% turnout</div>
+            </div>
+          </div>
+          <div class="election-row">
+            <div class="el-icon"><i class="ti ti-building" aria-hidden="true"></i></div>
+            <div class="el-info">
+              <div class="el-name">Faculty Senate Nominations</div>
+              <div class="el-meta"><span class="status-pill active">Active</span> · Ends 25 May</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:54%;background:#639922"></div></div>
+            </div>
+            <div class="el-right">
+              <div class="el-votes">2,190</div>
+              <div class="el-pct">54% turnout</div>
+            </div>
+          </div>
+          <div class="election-row">
+            <div class="el-icon"><i class="ti ti-calendar" aria-hidden="true"></i></div>
+            <div class="el-info">
+              <div class="el-name">Sports Committee Vote</div>
+              <div class="el-meta"><span class="status-pill scheduled">Scheduled</span> · Starts 1 Jun</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:0%;background:#7F77DD"></div></div>
+            </div>
+            <div class="el-right">
+              <div class="el-votes">—</div>
+              <div class="el-pct">not started</div>
+            </div>
+          </div>
+          <div class="election-row">
+            <div class="el-icon"><i class="ti ti-clipboard-list" aria-hidden="true"></i></div>
+            <div class="el-info">
+              <div class="el-name">Dept. Budget Allocation Poll</div>
+              <div class="el-meta"><span class="status-pill draft">Draft</span> · Not published</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:0%;background:#EF9F27"></div></div>
+            </div>
+            <div class="el-right">
+              <div class="el-votes">—</div>
+              <div class="el-pct">draft</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Quick actions</div>
+            </div>
+            <div class="quick-grid">
+              <button class="quick-btn" onclick="sendPrompt('Walk me through creating a new election step by step')">
+                <div class="qb-icon" style="background:#E6F1FB;color:#185FA5"><i class="ti ti-plus" aria-hidden="true"></i></div>
+                <div><div class="qb-label">New election</div><div class="qb-sub">Start from scratch</div></div>
+              </button>
+              <button class="quick-btn" onclick="sendPrompt('How do I bulk import voters via CSV file?')">
+                <div class="qb-icon" style="background:#EAF3DE;color:#3B6D11"><i class="ti ti-upload" aria-hidden="true"></i></div>
+                <div><div class="qb-label">Import voters</div><div class="qb-sub">CSV / Excel</div></div>
+              </button>
+              <button class="quick-btn" onclick="sendPrompt('Generate a full analytics report for all elections this semester')">
+                <div class="qb-icon" style="background:#FAEEDA;color:#854F0B"><i class="ti ti-chart-bar" aria-hidden="true"></i></div>
+                <div><div class="qb-label">View reports</div><div class="qb-sub">Analytics &amp; exports</div></div>
+              </button>
+              <button class="quick-btn" onclick="sendPrompt('How do I generate access codes for a restricted election?')">
+                <div class="qb-icon" style="background:#EEEDFE;color:#534AB7"><i class="ti ti-key" aria-hidden="true"></i></div>
+                <div><div class="qb-label">Access codes</div><div class="qb-sub">Generate &amp; manage</div></div>
+              </button>
+              <button class="quick-btn" onclick="sendPrompt('Show me the full audit log for suspicious activity')">
+                <div class="qb-icon" style="background:#FCEBEB;color:#A32D2D"><i class="ti ti-shield-check" aria-hidden="true"></i></div>
+                <div><div class="qb-label">Audit log</div><div class="qb-sub">Security events</div></div>
+              </button>
+              <button class="quick-btn" onclick="sendPrompt('How do I send email reminders to voters who haven\'t voted yet?')">
+                <div class="qb-icon" style="background:#E1F5EE;color:#0F6E56"><i class="ti ti-mail" aria-hidden="true"></i></div>
+                <div><div class="qb-label">Send reminders</div><div class="qb-sub">Email voters</div></div>
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Recent activity</div>
+              <span class="card-link">See all</span>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot blue"></div>
+              <div>
+                <div class="act-text"><strong>Alice Johnson</strong> submitted a vote in Student President Election</div>
+                <div class="act-time">2 minutes ago</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot green"></div>
+              <div>
+                <div class="act-text"><strong>Admin</strong> added 142 voters via CSV import to Faculty Senate</div>
+                <div class="act-time">18 minutes ago</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot amber"></div>
+              <div>
+                <div class="act-text"><strong>Sports Committee Vote</strong> was scheduled for June 1</div>
+                <div class="act-time">1 hour ago</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot red"></div>
+              <div>
+                <div class="act-text"><strong>3 failed login attempts</strong> detected from IP 192.168.1.45</div>
+                <div class="act-time">2 hours ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+const labelColor = isDark ? '#888780' : '#888780';
+
+new Chart(document.getElementById('lineChart'), {
+  type: 'line',
+  data: {
+    labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    datasets: [
+      {
+        label: 'Online',
+        data: [320, 480, 710, 590, 830, 420, 610],
+        borderColor: '#378ADD',
+        backgroundColor: 'rgba(55,138,221,0.08)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 3,
+        pointBackgroundColor: '#378ADD',
+        borderWidth: 2,
+        borderDash: []
+      },
+      {
+        label: 'In-person',
+        data: [80, 120, 160, 200, 140, 60, 90],
+        borderColor: '#639922',
+        backgroundColor: 'rgba(99,153,34,0.06)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 3,
+        pointBackgroundColor: '#639922',
+        borderWidth: 2,
+        borderDash: [5,4]
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString() + ' votes'
+        }
+      }
+    },
+    scales: {
+      x: { grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 11 } } },
+      y: { grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 11 }, callback: v => v.toLocaleString() }, beginAtZero: true }
+    }
+  }
+});
+
+new Chart(document.getElementById('donutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Single choice', 'Multiple choice', 'Ranked choice', 'Cumulative'],
+    datasets: [{
+      data: [50, 25, 17, 8],
+      backgroundColor: ['#378ADD', '#639922', '#EF9F27', '#7F77DD'],
+      borderWidth: 0,
+      hoverOffset: 4
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '65%',
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ' ' + ctx.label + ': ' + ctx.parsed + '%' } }
+    }
+  }
+});
+</script>
