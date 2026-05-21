@@ -2,49 +2,67 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
+import Navbar from "@/components/layout/Navbar";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault(); setLoading(true); setError("");
+    e.preventDefault();
+    setLoading(true);
+    setError("");
     try {
-      const res = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
+      const res = await fetch("/api/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
       const data = await res.json();
-      if (res.ok) { localStorage.setItem("token", data.token); localStorage.setItem("user", JSON.stringify(data.user)); router.push("/dashboard"); }
-      else { setError(data.error || "Login failed"); }
-    } catch { setError("Network error"); }
-    setLoading(false);
+      if (res.ok && data.token) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        window.location.href = "/dashboard";
+      } else {
+        setError(data.error || "Invalid credentials");
+        setLoading(false);
+      }
+    } catch { setError("Network error"); setLoading(false); }
   };
 
-  const inp = { width: "100%", padding: "14px 18px", borderRadius: 14, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", color: "#fff", fontSize: 14, outline: "none" };
-
   return (
-    <div style={{ width: "100%", maxWidth: 440, padding: 24 }}>
-      <div className="glass" style={{ padding: "40px 36px" }}>
-        <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <div style={{ width: 48, height: 48, borderRadius: 14, background: "linear-gradient(135deg, #6366F1, #8B5CF6)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", boxShadow: "0 0 30px rgba(99,102,241,0.4)" }}>
-            <span style={{ color: "#fff", fontSize: 20, fontWeight: 800 }}>BC</span>
+    <div className="min-h-screen bg-[#0b0c0f] text-white">
+      <Navbar />
+      <div className="flex items-center justify-center min-h-[80vh] px-6 pt-20">
+        <div className="w-full max-w-[440px]">
+          <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-8 backdrop-blur-xl">
+            <div className="text-center mb-8">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#4fffb0] to-[#00d4ff] flex items-center justify-center font-extrabold text-sm text-[#0b0c0f] mx-auto mb-4">BC</div>
+              <h1 className="text-2xl font-extrabold tracking-[-0.02em]">Welcome back</h1>
+              <p className="text-sm text-[rgba(255,255,255,0.35)] mt-2">Sign in to your dashboard</p>
+            </div>
+            {error && <div className="mb-6 p-4 rounded-xl bg-[rgba(239,68,68,0.06)] border border-[rgba(239,68,68,0.15)] text-[#EF4444] text-sm text-center">{error}</div>}
+            <form onSubmit={handleLogin} className="flex flex-col gap-4">
+              <div>
+                <label className="block text-xs font-bold text-[rgba(255,255,255,0.3)] uppercase mb-2">Email</label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[rgba(255,255,255,0.2)]" />
+                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="admin@ballotchain.com" className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] text-white text-sm outline-none focus:border-[rgba(79,255,176,0.3)] transition-all" required />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-[rgba(255,255,255,0.3)] uppercase mb-2">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[rgba(255,255,255,0.2)]" />
+                  <input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="password123" className="w-full pl-11 pr-12 py-3.5 rounded-xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] text-white text-sm outline-none focus:border-[rgba(79,255,176,0.3)] transition-all" required />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-[rgba(255,255,255,0.2)] hover:text-white"><EyeOff className="w-4 h-4" /></button>
+                </div>
+              </div>
+              <button type="submit" disabled={loading} className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#4fffb0] to-[#00d4ff] text-[#0b0c0f] text-sm font-bold hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2">{loading ? "Signing in..." : <>Sign In <ArrowRight className="w-4 h-4" /></>}</button>
+            </form>
+            <p className="text-center mt-6 text-sm text-[rgba(255,255,255,0.3)]">Don&apos;t have an account? <Link href="/register" className="text-[#4fffb0] font-semibold hover:underline">Create account</Link></p>
           </div>
-          <h1 className="syne" style={{ fontSize: 24, fontWeight: 700, color: "#fff" }}>Welcome back</h1>
-          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginTop: 4 }}>Sign in to BallotChain</p>
         </div>
-        {error && <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#EF4444", fontSize: 13, marginBottom: 16, textAlign: "center" }}>{error}</div>}
-        <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div><label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.4)", marginBottom: 6, textTransform: "uppercase" }}>Email</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" style={inp} required /></div>
-          <div><label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.4)", marginBottom: 6, textTransform: "uppercase" }}>Password</label><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter password" style={inp} required /></div>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
-            <label style={{ display: "flex", alignItems: "center", gap: 6, color: "rgba(255,255,255,0.5)", cursor: "pointer" }}><input type="checkbox" style={{ accentColor: "#6366F1" }} /> Remember me</label>
-            <Link href="/forgot-password" style={{ color: "#818CF8", textDecoration: "none" }}>Forgot password?</Link>
-          </div>
-          <button type="submit" disabled={loading} className="btn-purple" style={{ width: "100%", justifyContent: "center", padding: "14px", fontSize: 14, borderRadius: 14 }}>{loading ? "Signing in..." : "Sign In"}</button>
-        </form>
-        <p style={{ textAlign: "center", marginTop: 20, fontSize: 13, color: "rgba(255,255,255,0.4)" }}>Don&apos;t have an account? <Link href="/register" style={{ color: "#818CF8", textDecoration: "none", fontWeight: 600 }}>Sign up</Link></p>
       </div>
     </div>
   );

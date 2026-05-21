@@ -1,24 +1,37 @@
-﻿import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
+import mongoose, { Schema, Document, Model } from "mongoose";
 
-const userSchema = new mongoose.Schema({
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  email: { type: String, required: true, unique: true, lowercase: true },
-  password: { type: String, required: true, select: false },
-  role: { type: String, enum: ["admin", "voter", "observer"], default: "voter" },
-  emailVerified: { type: Boolean, default: false },
-  lastLogin: Date,
-}, { timestamps: true });
+export interface IUser extends Document {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: "super_admin" | "election_manager" | "organization_admin" | "viewer" | "voter" | "candidate";
+  organizationId?: string;
+  status: "active" | "suspended" | "invited";
+  verified: boolean;
+  twoFactorEnabled: boolean;
+  lastLogin?: Date;
+  refreshToken?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-userSchema.pre("save", async function(next) {
-  if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 12);
-  next();
-});
+const UserSchema = new Schema<IUser>(
+  {
+    firstName: { type: String, required: true, trim: true },
+    lastName: { type: String, required: true, trim: true },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    password: { type: String, required: true, select: false },
+    role: { type: String, enum: ["super_admin", "election_manager", "organization_admin", "viewer", "voter", "candidate"], default: "voter" },
+    organizationId: { type: String },
+    status: { type: String, enum: ["active", "suspended", "invited"], default: "active" },
+    verified: { type: Boolean, default: false },
+    twoFactorEnabled: { type: Boolean, default: false },
+    lastLogin: { type: Date },
+    refreshToken: { type: String, select: false },
+  },
+  { timestamps: true }
+);
 
-userSchema.methods.comparePassword = async function(candidatePassword: string) {
-  return bcrypt.compare(candidatePassword, this.password);
-};
-
-export default mongoose.models.User || mongoose.model("User", userSchema);
+export const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>("User", UserSchema);

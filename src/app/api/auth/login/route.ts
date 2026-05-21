@@ -1,11 +1,20 @@
-﻿import { NextResponse } from "next/server";
-export async function POST(req: Request) {
-  try {
-    const { email, password } = await req.json();
-    if (!email || !password) return NextResponse.json({ error: "Email and password required" }, { status: 400 });
-    if (email === "admin@ballotchain.com" && password === "password123") {
-      return NextResponse.json({ token: "demo-jwt-token", user: { id: "1", firstName: "Admin", lastName: "User", email, role: "admin" } });
-    }
-    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-  } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 500 }); }
+﻿import { NextRequest, NextResponse } from "next/server";
+
+export async function POST(request: NextRequest) {
+  const { email, password } = await request.json();
+
+  if (email === "admin@ballotchain.com" && password === "password123") {
+    return NextResponse.json({
+      token: "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJkZW1vIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlIjoic3VwZXJfYWRtaW4ifQ.demo",
+      user: {
+        id: "demo-admin",
+        firstName: "Admin",
+        lastName: "User",
+        email: "admin@ballotchain.com",
+        role: "super_admin",
+      },
+    });
+  }
+
+  return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
 }

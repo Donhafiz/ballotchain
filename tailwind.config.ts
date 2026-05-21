@@ -1,40 +1,36 @@
-import type { Config } from "tailwindcss";
+﻿import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
-  darkMode: "class",
   theme: {
     extend: {
-      colors: {
-        primary: {
-          50: "#eff6ff", 100: "#dbeafe", 200: "#bfdbfe", 300: "#93c5fd",
-          400: "#60a5fa", 500: "#3b82f6", 600: "#2563eb", 700: "#1d4ed8",
-          800: "#1e40af", 900: "#1e3a8a", 950: "#172554",
+      keyframes: {
+        fadeSlideDown: {
+          from: { opacity: "0", transform: "translateY(-12px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
         },
-        accent: {
-          50: "#fdf4ff", 100: "#fae8ff", 200: "#f5d0fe", 300: "#f0abfc",
-          400: "#e879f9", 500: "#d946ef", 600: "#c026d3", 700: "#a21caf",
-          800: "#86198f", 900: "#701a75",
+        fadeSlideUp: {
+          from: { opacity: "0", transform: "translateY(16px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        pulse: {
+          "0%, 100%": { opacity: "1", transform: "scale(1)" },
+          "50%": { opacity: "0.5", transform: "scale(1.4)" },
         },
       },
       animation: {
-        "fade-in": "fadeIn 0.5s ease-in-out",
-        "slide-up": "slideUp 0.5s ease-out",
-        shimmer: "shimmer 2s linear infinite",
-        float: "float 8s ease-in-out infinite",
-        "ping-slow": "ping 3s cubic-bezier(0, 0, 0.2, 1) infinite",
-        "pulse-soft": "pulseSoft 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        fadeSlideDown: "fadeSlideDown 0.6s ease both",
+        fadeSlideUp: "fadeSlideUp 0.7s ease both",
+        marquee: "marquee 28s linear infinite",
+        pulse: "pulse 1.5s infinite",
       },
-      keyframes: {
-        fadeIn: { "0%": { opacity: "0" }, "100%": { opacity: "1" } },
-        slideUp: { "0%": { opacity: "0", transform: "translateY(20px)" }, "100%": { opacity: "1", transform: "translateY(0)" } },
-        shimmer: { "0%": { backgroundPosition: "-200% 0" }, "100%": { backgroundPosition: "200% 0" } },
-        float: { "0%, 100%": { transform: "translateY(0px) rotate(0deg)" }, "33%": { transform: "translateY(-30px) rotate(1deg)" }, "66%": { transform: "translateY(-15px) rotate(-1deg)" } },
-        pulseSoft: { "0%, 100%": { opacity: "1" }, "50%": { opacity: "0.7" } },
-      },
-      backdropBlur: { xs: "2px" },
     },
   },
   plugins: [],
 };
+
 export default config;
