@@ -1,105 +1,85 @@
-"use client";
+﻿"use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useApp } from "@/lib/store/AppContext";
+import { useState } from "react";
 
-export default function ElectionsListPage() {
-  const { elections, fetchElections, token } = useApp();
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<any>(null);
-  const [editingElection, setEditingElection] = useState<any>(null);
-  const [message, setMessage] = useState("");
+const elections = [
+  { id: "1", title: "Student Council 2026", status: "active", voters: 450, votes: 392, candidates: 4, startDate: "May 1", endDate: "May 30", turnout: 78, type: "single_choice" },
+  { id: "2", title: "Faculty Senate Nominations", status: "active", voters: 280, votes: 142, candidates: 3, startDate: "May 10", endDate: "May 25", turnout: 54, type: "multiple_choice" },
+  { id: "3", title: "Sports Committee Vote", status: "scheduled", voters: 120, votes: 0, candidates: 2, startDate: "Jun 1", endDate: "Jun 5", turnout: 0, type: "single_choice" },
+  { id: "4", title: "Dept. Budget Allocation", status: "draft", voters: 85, votes: 0, candidates: 5, startDate: "TBD", endDate: "TBD", turnout: 0, type: "ranked_choice" },
+  { id: "5", title: "Club President Election", status: "completed", voters: 200, votes: 178, candidates: 3, startDate: "Apr 15", endDate: "Apr 20", turnout: 89, type: "single_choice" },
+  { id: "6", title: "Graduate Representative", status: "active", voters: 320, votes: 256, candidates: 4, startDate: "May 5", endDate: "May 28", turnout: 80, type: "single_choice" },
+  { id: "7", title: "Research Committee", status: "draft", voters: 45, votes: 0, candidates: 2, startDate: "Jun 10", endDate: "Jun 15", turnout: 0, type: "multiple_choice" },
+  { id: "8", title: "Alumni Board Election", status: "completed", voters: 1500, votes: 1342, candidates: 6, startDate: "Mar 1", endDate: "Mar 15", turnout: 89, type: "ranked_choice" },
+];
 
-  useEffect(() => { fetchElections(); }, []);
+const statusConfig: Record<string, { bg: string; text: string; dot: string }> = {
+  active: { bg: "rgba(34,197,94,0.08)", text: "#22C55E", dot: "#22C55E" },
+  scheduled: { bg: "rgba(99,102,241,0.08)", text: "#818CF8", dot: "#6366F1" },
+  draft: { bg: "rgba(245,158,11,0.08)", text: "#F59E0B", dot: "#F59E0B" },
+  completed: { bg: "rgba(107,114,128,0.08)", text: "#9CA3AF", dot: "#6B7280" },
+};
 
-  const deleteElection = async (electionId: string) => {
-    const t = token || localStorage.getItem("token");
-    await fetch("/api/admin/elections", {
-      method: "DELETE", headers: { "Content-Type": "application/json", Authorization: "Bearer " + t },
-      body: JSON.stringify({ electionId }),
-    });
-    setMessage("Election deleted"); fetchElections(); setShowDeleteConfirm(null);
-    setTimeout(() => setMessage(""), 3000);
-  };
-
-  const updateElection = async (electionId: string, updates: any) => {
-    const t = token || localStorage.getItem("token");
-    await fetch("/api/admin/elections", {
-      method: "PUT", headers: { "Content-Type": "application/json", Authorization: "Bearer " + t },
-      body: JSON.stringify({ electionId, ...updates }),
-    });
-    setMessage("Election updated"); setEditingElection(null); fetchElections();
-    setTimeout(() => setMessage(""), 3000);
-  };
+export default function ElectionsPage() {
+  const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
+  const filtered = elections.filter(e => {
+    if (filter !== "all" && e.status !== filter) return false;
+    if (search && !e.title.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
 
   return (
-    <div style={{ padding: 24 }}>
-      {message && <div style={{ padding: "12px 18px", borderRadius: 8, background: "rgba(34,197,94,0.1)", color: "rgba(34,197,94,0.9)", fontSize: 13, marginBottom: 16 }}>{message}</div>}
-      
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: 28 }}>
         <div>
-          <h1 className="syne" style={{ fontSize: 20, fontWeight: 700 }}>Elections</h1>
-          <p style={{ fontSize: 12, color: "rgba(248,250,252,0.25)", marginTop: 3 }}>{elections.length} total elections</p>
+          <h1 className="syne" style={{ fontSize: 26, fontWeight: 700, color: "#fff", letterSpacing: "-0.02em" }}>Elections</h1>
+          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginTop: 4 }}>{elections.length} total · {elections.filter(e => e.status === "active").length} active · {elections.filter(e => e.status === "scheduled").length} scheduled</p>
         </div>
-        <Link href="/dashboard/elections/create" className="btn-accent">+ New Election</Link>
+        <Link href="/dashboard/elections/create" className="btn-purple" style={{ textDecoration: "none" }}>+ New Election</Link>
       </div>
 
-      <div className="card-dark" style={{ overflow: "hidden" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead><tr style={{ borderBottom: "0.5px solid rgba(255,255,255,0.07)" }}>{["Title","Status","Candidates","Voters","Votes","Actions"].map(h => <th key={h} style={{ textAlign: "left", padding: "12px 18px", fontSize: 10, fontWeight: 600, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(248,250,252,0.22)" }}>{h}</th>)}</tr></thead>
-          <tbody>
-            {elections.map(e => (
-              <tr key={e._id} style={{ borderBottom: "0.5px solid rgba(255,255,255,0.07)" }}>
-                <td style={{ padding: "12px 18px", fontSize: 13, fontWeight: 500 }}>{e.title}</td>
-                <td style={{ padding: "12px 18px" }}><span className={e.status === "active" ? "pill-active" : e.status === "draft" ? "pill-draft" : "pill-closed"}>{e.status}</span></td>
-                <td style={{ padding: "12px 18px", fontSize: 12, color: "rgba(248,250,252,0.45)" }}>{e.candidates?.length || 0}</td>
-                <td style={{ padding: "12px 18px", fontSize: 12, color: "rgba(248,250,252,0.45)" }}>{e.totalVoters || 0}</td>
-                <td style={{ padding: "12px 18px", fontSize: 12, color: "rgba(248,250,252,0.45)" }}>{e.totalVotes || 0}</td>
-                <td style={{ padding: "12px 18px", display: "flex", gap: 8 }}>
-                  <Link href={"/dashboard/elections/" + e._id} style={{ color: "#22C55E", textDecoration: "none", fontSize: 12, fontWeight: 600 }}>View</Link>
-                  <button onClick={() => setEditingElection(e)} style={{ color: "#818CF8", background: "none", border: "none", cursor: "pointer", fontSize: 12, fontWeight: 600 }}>Edit</button>
-                  <button onClick={() => setShowDeleteConfirm({ id: e._id, name: e.title })} style={{ color: "rgba(239,68,68,0.75)", background: "none", border: "none", cursor: "pointer", fontSize: 12, fontWeight: 600 }}>Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
+        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search elections..." style={{ padding: "8px 16px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)", color: "#fff", fontSize: 13, outline: "none", width: 250 }} />
+        <div style={{ display: "flex", gap: 4 }}>
+          {["all","active","scheduled","draft","completed"].map(f => (
+            <button key={f} onClick={() => setFilter(f)} style={{ padding: "6px 14px", borderRadius: 8, border: "0.5px solid rgba(255,255,255,0.1)", background: filter === f ? "rgba(99,102,241,0.15)" : "rgba(255,255,255,0.02)", color: filter === f ? "#818CF8" : "rgba(255,255,255,0.4)", fontSize: 11, fontWeight: 600, cursor: "pointer", textTransform: "capitalize" }}>{f}</button>
+          ))}
+        </div>
       </div>
 
-      {/* Edit Modal */}
-      {editingElection && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>
-          <div className="card-dark" style={{ width: 500, padding: 24 }}>
-            <h3 className="syne" style={{ fontSize: 16, fontWeight: 700, marginBottom: 20 }}>Edit Election</h3>
-            <form onSubmit={async (e) => { e.preventDefault(); const form = new FormData(e.currentTarget); const data = Object.fromEntries(form); updateElection(editingElection._id, data); }} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <input name="title" defaultValue={editingElection.title} placeholder="Title" style={{ padding: "10px 14px", borderRadius: 8, border: "0.5px solid rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.032)", color: "#fff", fontSize: 13 }} />
-              <textarea name="description" defaultValue={editingElection.description} placeholder="Description" rows={3} style={{ padding: "10px 14px", borderRadius: 8, border: "0.5px solid rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.032)", color: "#fff", fontSize: 13, resize: "vertical" }} />
-              <select name="status" defaultValue={editingElection.status} style={{ padding: "10px 14px", borderRadius: 8, border: "0.5px solid rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.032)", color: "#fff", fontSize: 13 }}>
-                <option value="draft">Draft</option><option value="active">Active</option><option value="completed">Completed</option><option value="archived">Archived</option>
-              </select>
-              <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-                <button type="submit" className="btn-accent" style={{ flex: 1 }}>Save</button>
-                <button type="button" onClick={() => setEditingElection(null)} className="btn-outline" style={{ flex: 1 }}>Cancel</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirmation */}
-      {showDeleteConfirm && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>
-          <div className="card-dark" style={{ width: 400, padding: 24, textAlign: "center" }}>
-            <div style={{ fontSize: 40, marginBottom: 16 }}>⚠️</div>
-            <h3 className="syne" style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>Delete Election?</h3>
-            <p style={{ fontSize: 13, color: "rgba(248,250,252,0.45)", marginBottom: 20 }}>"{showDeleteConfirm.name}" will be permanently deleted.</p>
-            <div style={{ display: "flex", gap: 8 }}>
-              <button onClick={() => deleteElection(showDeleteConfirm.id)} style={{ flex: 1, padding: "10px", borderRadius: 8, background: "#EF4444", color: "#fff", border: "none", fontWeight: 600, cursor: "pointer" }}>Delete</button>
-              <button onClick={() => setShowDeleteConfirm(null)} className="btn-outline" style={{ flex: 1 }}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <div className="glass" style={{ overflow: "hidden" }}>
+        {filtered.length === 0 ? (
+          <div style={{ padding: 60, textAlign: "center", color: "rgba(255,255,255,0.4)" }}>No elections found.</div>
+        ) : (
+          filtered.map((e, i) => {
+            const s = statusConfig[e.status];
+            return (
+              <Link key={e.id} href={"/dashboard/elections/" + e.id} style={{ display: "flex", alignItems: "center", gap: 16, padding: "18px 24px", borderBottom: i < filtered.length - 1 ? "1px solid rgba(255,255,255,0.03)" : "none", textDecoration: "none", color: "inherit", transition: "background 0.15s" }}>
+                <div style={{ width: 10, height: 10, borderRadius: "50%", background: s.dot, flexShrink: 0 }} />
+                <div style={{ width: 46, height: 46, borderRadius: 12, background: "rgba(99,102,241,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>🗳️</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>{e.title}</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 5 }}>
+                    <span style={{ fontSize: 10, fontWeight: 600, padding: "3px 10px", borderRadius: 100, background: s.bg, color: s.text }}>{e.status}</span>
+                    <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>{e.type.replace("_", " ")}</span>
+                    <span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)" }}>·</span>
+                    <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>{e.candidates} candidates</span>
+                    <span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)" }}>·</span>
+                    <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>{e.startDate} → {e.endDate}</span>
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 28, flexShrink: 0 }}>
+                  <div style={{ textAlign: "center" }}><div style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>{e.voters.toLocaleString()}</div><div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Voters</div></div>
+                  <div style={{ textAlign: "center" }}><div style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>{e.votes.toLocaleString()}</div><div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Votes</div></div>
+                  <div style={{ textAlign: "center" }}><div style={{ fontSize: 18, fontWeight: 700, color: e.turnout > 50 ? "#22C55E" : e.turnout > 0 ? "#F59E0B" : "rgba(255,255,255,0.3)" }}>{e.turnout}%</div><div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Turnout</div></div>
+                </div>
+              </Link>
+            );
+          })
+        )}
+      </div>
     </div>
   );
 }
