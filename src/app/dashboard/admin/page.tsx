@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Users, Vote, Shield, AlertTriangle, CheckCircle2, XCircle, Ban, RefreshCw, Sparkles, Eye , Activity} from "lucide-react";
+import { Users, Vote, Shield, AlertTriangle, CheckCircle2, XCircle, Ban, RefreshCw, Sparkles, Eye , Activity} from "lucide-react";`nimport { PageSkeleton } from "@/components/shared/Skeletons";;
 
 export default function AdminPage() {
   const [mounted, setMounted] = useState(false);
@@ -19,7 +19,7 @@ export default function AdminPage() {
     { id: "4", name: "Emily Davis", email: "emily@gov.org", role: "Viewer", status: "suspended" },
   ]);
 
-  if (!mounted) return <div className="p-8 text-white/40">Loading...</div>;
+  if (!mounted) return <PageSkeleton />;
 
   return (
     <div className="space-y-6">
@@ -64,10 +64,10 @@ export default function AdminPage() {
         <div className="rounded-3xl border border-white/5 bg-white/[0.02] p-8 backdrop-blur-xl">
           <div className="flex items-center gap-4 mb-6">
             <div className="w-16 h-16 rounded-2xl bg-emerald-400/10 flex items-center justify-center"><Shield className="w-8 h-8 text-emerald-300" /></div>
-            <div><div className="text-[36px] font-black">94<span className="text-[16px] text-white/25">/100</span></div><div className="text-[14px] text-emerald-300 font-bold">Security Score — Excellent</div></div>
+            <div><div className="text-[36px] font-black">94<span className="text-[16px] text-white/25">/100</span></div><div className="text-[14px] text-emerald-300 font-bold">Security Score â€” Excellent</div></div>
           </div>
           <div className="space-y-3">
-            {[{t:"Multiple failed logins",d:"IP 203.0.113.42 — 12 attempts",s:"high"},{t:"API key generated",d:"Admin created key for integration",s:"info"},{t:"Unusual vote pattern",d:"Spike of 47 votes from single precinct",s:"medium"}].map((a,i) => (
+            {[{t:"Multiple failed logins",d:"IP 203.0.113.42 â€” 12 attempts",s:"high"},{t:"API key generated",d:"Admin created key for integration",s:"info"},{t:"Unusual vote pattern",d:"Spike of 47 votes from single precinct",s:"medium"}].map((a,i) => (
               <div key={i} className="flex items-start gap-3 p-4 rounded-xl bg-white/[0.01]"><div className={`w-2 h-2 rounded-full mt-1.5 ${a.s==="high"?"bg-red-400":a.s==="medium"?"bg-amber-400":"bg-emerald-400"}`} /><div><div className="text-[13px] font-bold text-white">{a.t}</div><div className="text-[12px] text-white/30 mt-1">{a.d}</div></div></div>
             ))}
           </div>

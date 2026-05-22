@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Vote, Users, Shield, BarChart3, FileText,
   Building2, Lock, Settings, CreditCard, Webhook, Palette,
-  Heart, ChevronLeft, ChevronRight, Search, Zap, Bell,
+  Heart, Mail, ChevronLeft, ChevronRight, Search, Zap, Bell,
   LogOut, User, ChevronDown, Plus, Home, Menu, X, Eye,
   Sparkles, Orbit, ArrowUpRight
 } from "lucide-react";
@@ -45,6 +45,7 @@ const menuSections = [
       { icon: Webhook, label: "Webhooks", href: "/dashboard/webhooks" },
       { icon: Palette, label: "Branding", href: "/dashboard/branding" },
       { icon: Heart, label: "Health", href: "/dashboard/health" },
+      { icon: Mail, label: "Email Setup", href: "/dashboard/email-setup" },
     ],
   },
 ];

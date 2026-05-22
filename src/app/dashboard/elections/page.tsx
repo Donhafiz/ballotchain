@@ -1,9 +1,9 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Vote, Plus, Search, Play, Pause, Eye, Sparkles, Layers3, Users, Activity, ChevronRight } from "lucide-react";
+import { Vote, Plus, Search, Play, Pause, Eye, Sparkles, Layers3, Users, Activity, ChevronRight } from "lucide-react";`nimport { PageSkeleton } from "@/components/shared/Skeletons";;
 
 export default function ElectionsPage() {
   const [elections, setElections] = useState<any[]>([]);
@@ -34,7 +34,7 @@ export default function ElectionsPage() {
     return m && s;
   });
 
-  if (loading) return <div className="p-8 text-white/40">Loading...</div>;
+  if (loading) return <PageSkeleton />;
 
   return (
     <div className="space-y-6">
