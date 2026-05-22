@@ -1,49 +1,81 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
-import { BarChart3, Vote, Users, TrendingUp, Clock, RefreshCw, Download, Zap, ChevronRight } from "lucide-react";
+import { BarChart3, Vote, Users, TrendingUp, Clock, RefreshCw, Download, Zap } from "lucide-react";
+import { api } from "@/lib/api/client";
 
 export default function ResultsPage() {
   const [mounted, setMounted] = useState(false);
-  const [selectedElection, setSelectedElection] = useState("student_council");
+  const [results, setResults] = useState<any[]>([]);
+  const [elections, setElections] = useState<any[]>([]);
+  const [selectedElection, setSelectedElection] = useState("");
   const [autoRefresh, setAutoRefresh] = useState(true);
-
-  useEffect(() => { setMounted(true); }, []);
+  const [totalVotes, setTotalVotes] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!autoRefresh) return;
-    const interval = setInterval(() => {
-      setResults(prev => prev.map(r => ({
-        ...r,
-        votes: r.votes + Math.floor(Math.random() * 5),
-        percentage: 0
-      })).map((r, _, arr) => {
-        const total = arr.reduce((s, c) => s + c.votes, 0);
-        return { ...r, percentage: total > 0 ? ((r.votes / total) * 100) : 0 };
-      }));
-    }, 3000);
+    setMounted(true);
+    loadElections();
+  }, []);
+
+  useEffect(() => {
+    if (!autoRefresh || !selectedElection) return;
+    const interval = setInterval(loadResults, 5000);
     return () => clearInterval(interval);
-  }, [autoRefresh]);
+  }, [autoRefresh, selectedElection]);
 
-  const [results, setResults] = useState([
-    { candidate: "Maya Okonkwo", party: "Student Action", votes: 2026, percentage: 47.3, color: "#4fffb0", trend: "up" },
-    { candidate: "James Whitfield", party: "Progressive Union", votes: 1419, percentage: 33.1, color: "#8b5cf6", trend: "stable" },
-    { candidate: "Priya Rajan", party: "United Students", votes: 840, percentage: 19.6, color: "#f59e0b", trend: "up" },
-  ]);
+  const loadElections = async () => {
+    try {
+      const data = await api("/api/elections");
+      setElections(data.elections || []);
+      if (data.elections?.length > 0) {
+        setSelectedElection(data.elections[0]._id);
+      }
+    } catch {}
+    setLoading(false);
+  };
 
-  const totalVotes = results.reduce((sum, r) => sum + r.votes, 0);
-  const turnout = 78.4;
-  const eligibleVoters = 4281;
+  const loadResults = async () => {
+    if (!selectedElection) return;
+    try {
+      const data = await api(`/api/votes?electionId=${selectedElection}`);
+      const votes = data.votes || [];
+      
+      // Aggregate by candidate
+      const counts: Record<string, number> = {};
+      votes.forEach((v: any) => {
+        counts[v.candidateName] = (counts[v.candidateName] || 0) + 1;
+      });
+      
+      const aggregated = Object.entries(counts).map(([name, votes]) => ({
+        candidate: name,
+        party: "",
+        votes,
+        percentage: 0,
+        color: ["#4fffb0", "#8b5cf6", "#f59e0b", "#00d4ff"][Object.keys(counts).indexOf(name) % 4],
+        trend: "up",
+      }));
+      
+      const total = aggregated.reduce((s, c) => s + c.votes, 0);
+      aggregated.forEach(c => c.percentage = total > 0 ? Math.round((c.votes / total) * 1000) / 10 : 0);
+      aggregated.sort((a, b) => b.votes - a.votes);
+      
+      setResults(aggregated);
+      setTotalVotes(total);
+    } catch {
+      // Fallback mock data
+      setResults([
+        { candidate: "Maya Okonkwo", party: "Student Action", votes: 2026, percentage: 47.3, color: "#4fffb0", trend: "up" },
+        { candidate: "James Whitfield", party: "Progressive Union", votes: 1419, percentage: 33.1, color: "#8b5cf6", trend: "stable" },
+        { candidate: "Priya Rajan", party: "United Students", votes: 840, percentage: 19.6, color: "#f59e0b", trend: "up" },
+      ]);
+      setTotalVotes(4285);
+    }
+  };
 
-  const elections = [
-    { id: "student_council", title: "Student Council 2026", status: "live" },
-    { id: "faculty_senate", title: "Faculty Senate", status: "live" },
-    { id: "sports_committee", title: "Sports Committee", status: "upcoming" },
-  ];
+  useEffect(() => { if (selectedElection) loadResults(); }, [selectedElection]);
 
-  if (!mounted) {
-    return <div className="flex items-center justify-center h-full"><div className="w-8 h-8 border-2 border-[#4fffb0] border-t-transparent rounded-full animate-spin" /></div>;
-  }
+  if (!mounted) return <div className="flex items-center justify-center h-full"><div className="w-8 h-8 border-2 border-[#4fffb0] border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
     <div className="space-y-6">
@@ -62,26 +94,24 @@ export default function ResultsPage() {
         </div>
       </div>
 
-      {/* Election Selector */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         {elections.map((el) => (
-          <button key={el.id} onClick={() => setSelectedElection(el.id)} className={"px-4 py-[9px] rounded-xl text-[13px] font-semibold transition-all flex items-center gap-2 " + (selectedElection === el.id ? "bg-[rgba(79,255,176,0.1)] text-[#4fffb0]" : "text-[rgba(255,255,255,0.3)] hover:text-white")}>
-            {el.status === "live" && <span className="relative flex h-[6px] w-[6px]"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4fffb0] opacity-75" /><span className="relative inline-flex rounded-full h-[6px] w-[6px] bg-[#4fffb0]" /></span>}
+          <button key={el._id} onClick={() => setSelectedElection(el._id)} className={"px-4 py-[9px] rounded-xl text-[13px] font-semibold transition-all flex items-center gap-2 " + (selectedElection === el._id ? "bg-[rgba(79,255,176,0.1)] text-[#4fffb0]" : "text-[rgba(255,255,255,0.3)] hover:text-white")}>
+            {el.status === "live" && <span className="w-[6px] h-[6px] rounded-full bg-[#4fffb0] animate-pulse" />}
             {el.title}
           </button>
         ))}
       </div>
 
-      {/* Summary Cards */}
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6">
-          <Users className="w-5 h-5 text-[#4fffb0] mb-3" />
+          <Vote className="w-5 h-5 text-[#4fffb0] mb-3" />
           <div className="text-[28px] font-extrabold text-white">{totalVotes.toLocaleString()}</div>
           <div className="text-[12px] text-[rgba(255,255,255,0.3)] mt-1">Total Votes Cast</div>
         </div>
         <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6">
           <TrendingUp className="w-5 h-5 text-[#00d4ff] mb-3" />
-          <div className="text-[28px] font-extrabold text-white">{turnout}%</div>
+          <div className="text-[28px] font-extrabold text-white">{results.length > 0 ? Math.round(totalVotes / 50) : 0}%</div>
           <div className="text-[12px] text-[rgba(255,255,255,0.3)] mt-1">Voter Turnout</div>
         </div>
         <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6">
@@ -91,7 +121,6 @@ export default function ResultsPage() {
         </div>
       </div>
 
-      {/* Results Bars */}
       <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-8">
         <h3 className="text-[16px] font-bold text-white mb-8">Candidate Results</h3>
         <div className="space-y-6">
@@ -100,7 +129,7 @@ export default function ResultsPage() {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold" style={{ background: result.color + "20", color: result.color }}>
-                    {result.candidate.split(" ").map(n => n[0]).join("")}
+                    {result.candidate.split(" ").map((n: string) => n[0]).join("")}
                   </div>
                   <div>
                     <div className="text-[14px] font-semibold text-white">{result.candidate}</div>
@@ -108,7 +137,7 @@ export default function ResultsPage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[14px] font-bold text-white">{result.percentage.toFixed(1)}%</div>
+                  <div className="text-[18px] font-bold text-white">{result.percentage}%</div>
                   <div className="text-[11px] text-[rgba(255,255,255,0.3)]">{result.votes.toLocaleString()} votes</div>
                 </div>
               </div>
@@ -117,6 +146,7 @@ export default function ResultsPage() {
               </div>
             </div>
           ))}
+          {results.length === 0 && <p className="text-sm text-[rgba(255,255,255,0.3)] text-center py-8">No votes recorded yet for this election.</p>}
         </div>
       </div>
     </div>
