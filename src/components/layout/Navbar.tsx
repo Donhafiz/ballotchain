@@ -1,10 +1,11 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState, useRef } from "react";
+import { useTheme } from "@/lib/theme/ThemeContext";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Menu, X, Vote, ChevronRight, Sparkles, Orbit, ShieldCheck, Eye, BookOpen,
+  Menu, X, Vote, ChevronRight, Sparkles, Orbit, ShieldCheck, Eye, BookOpen, Sun, Moon,
 } from "lucide-react";
 
 const navLinks = [
@@ -25,7 +26,9 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
+
 export default function Navbar() {
+  const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -101,7 +104,10 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <button onClick={() => setMobileOpen(!mobileOpen)} className="relative z-[140] flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-white backdrop-blur-2xl transition-all duration-300 hover:border-white/20 lg:hidden" aria-label="Toggle Menu">
+                      <button onClick={toggleTheme} className="relative z-[140] flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-white/60 backdrop-blur-2xl transition-all duration-300 hover:border-white/20 hover:text-white mr-2 lg:mr-0 lg:ml-2" aria-label="Toggle theme">
+              {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </button>
+          <button onClick={toggleTheme} className="relative z-[140] flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-white/60 backdrop-blur-2xl transition-all duration-300 hover:border-white/20 hover:text-white mr-1 lg:ml-2" aria-label="Toggle theme">{theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}</button>`n          <button onClick={toggleTheme} className="relative z-[140] flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-white/60 backdrop-blur-2xl transition-all duration-300 hover:border-white/20 hover:text-white mr-1 lg:ml-2" aria-label="Toggle theme">{theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}</button>`n          <button onClick={() => setMobileOpen(!mobileOpen)} className="relative z-[140] flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-white backdrop-blur-2xl transition-all duration-300 hover:border-white/20 lg:hidden" aria-label="Toggle Menu">
             <AnimatePresence mode="wait">
               {mobileOpen ? <motion.div key="close" initial={{ opacity: 0, rotate: -90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: 90 }} transition={{ duration: 0.2 }}><X className="h-5 w-5" /></motion.div>
                : <motion.div key="menu" initial={{ opacity: 0, rotate: 90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: -90 }} transition={{ duration: 0.2 }}><Menu className="h-5 w-5" /></motion.div>}

@@ -1,12 +1,13 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Vote, Users, TrendingUp, Activity, Plus, ArrowUp, ArrowRight,
-  Zap, Clock, Eye, Sparkles, ShieldCheck, BarChart3, Layers3
-, FileText } from "lucide-react";
+  Zap, Clock, Eye, Sparkles, ShieldCheck, BarChart3, Layers3,
+  FileText
+} from "lucide-react";
 
 export default function DashboardPage() {
   const [mounted, setMounted] = useState(false);
@@ -101,7 +102,7 @@ export default function DashboardPage() {
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/[0.06] to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
             <div className="relative z-10">
               <div className="flex items-start justify-between mb-4">
-                <div className={`flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br ${stat.gradient}`}>
+                <div className={`flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br ${stat.gradient} bg-opacity-10`}>
                   <stat.icon className="w-5 h-5 text-white" />
                 </div>
                 <span className={`flex items-center gap-1 text-[11px] font-black px-2 py-1 rounded-full ${stat.live ? "bg-emerald-400/10 text-emerald-300" : "bg-emerald-400/10 text-emerald-300"}`}>
@@ -149,7 +150,7 @@ export default function DashboardPage() {
             {[{ title: "Student Council 2026", voters: 450, votes: 3847, turnout: 78, status: "Live" }, { title: "Faculty Senate", voters: 280, votes: 2190, turnout: 54, status: "Live" }, { title: "Sports Committee", voters: 120, votes: 0, turnout: 0, status: "Scheduled" }].map((e, i) => (
               <Link key={i} href={"/dashboard/elections/" + (i + 1)} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/[0.02] transition-all no-underline group">
                 <div className="w-10 h-10 rounded-xl bg-emerald-400/10 flex items-center justify-center shrink-0"><Vote className="w-5 h-5 text-emerald-300" /></div>
-                <div className="flex-1 min-w-0"><div className="text-[13px] font-bold text-white truncate">{e.title}</div><div className="text-[11px] text-white/25 mt-[2px]">{e.voters} voters ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· {e.votes} votes</div>
+                <div className="flex-1 min-w-0"><div className="text-[13px] font-bold text-white truncate">{e.title}</div><div className="text-[11px] text-white/25 mt-[2px]">{e.voters} voters · {e.votes} votes</div>
                   {e.turnout > 0 && <div className="mt-2 flex items-center gap-2"><div className="flex-1 h-[4px] bg-white/5 rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-emerald-300 to-cyan-300 rounded-full" style={{ width: e.turnout + "%" }} /></div><span className="text-[10px] font-bold text-white/25">{e.turnout}%</span></div>}
                 </div>
                 <span className={"text-[10px] font-black px-2 py-1 rounded-full uppercase " + (e.status === "Live" ? "bg-emerald-400/10 text-emerald-300" : "bg-amber-400/10 text-amber-300")}>{e.status}</span>

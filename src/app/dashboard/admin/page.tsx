@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Users, Vote, Shield, AlertTriangle, CheckCircle2, XCircle, Ban, RefreshCw, Sparkles, Eye } from "lucide-react";
+import { Users, Vote, Shield, AlertTriangle, CheckCircle2, XCircle, Ban, RefreshCw, Sparkles, Eye , Activity} from "lucide-react";
 
 export default function AdminPage() {
   const [mounted, setMounted] = useState(false);

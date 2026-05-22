@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { Vote, Users, TrendingUp, Clock, Shield, Zap, Globe, BarChart3 } from "lucide-react";
+import Link from "next/link";
+import { Vote, Users, TrendingUp, Clock, Shield, Zap, Globe, BarChart3 , Orbit} from "lucide-react";
 
 export default function TVDashboard() {
   const [results, setResults] = useState<any[]>([]);
@@ -67,7 +68,7 @@ export default function TVDashboard() {
     <div className="min-h-screen bg-[#020202] text-white overflow-hidden">
       <div className="border-b border-white/5 bg-gradient-to-r from-emerald-900/30 via-cyan-900/20 to-violet-900/30 px-8 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-300 to-cyan-300 flex items-center justify-center"><Vote className="w-5 h-5 text-black" /></div><div><h1 className="text-lg font-black">BallotChain <span className="text-emerald-300">LIVE</span></h1><p className="text-[10px] text-white/30 uppercase tracking-[0.2em]">Election Command Center</p></div></div>
+          <Link href="/" className="flex items-center gap-3 no-underline"><div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-emerald-300 via-cyan-300 to-violet-300 shadow-[0_5px_20px_rgba(16,185,129,0.3)]"><div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.6),transparent_60%)]" /><Orbit className="relative z-10 h-5 w-5 text-black" /></div><div><h1 className="text-lg font-black">Ballot<span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">Chain</span> <span className="text-emerald-300">LIVE</span></h1><p className="text-[10px] text-white/30 uppercase tracking-[0.2em]">Election Command Center</p></div></Link>
           <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-400/10 border border-emerald-400/20"><span className="relative flex h-2.5 w-2.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-300" /></span><span className="text-xs font-black text-emerald-300 uppercase tracking-[0.1em]">Live</span></div>
         </div>
         <div className="text-right" suppressHydrationWarning><div className="text-2xl font-black font-mono">{mounted ? time.toLocaleTimeString() : "00:00:00"}</div><div className="text-[10px] text-white/20 uppercase">{mounted ? time.toLocaleDateString() : ""}</div></div>
@@ -93,7 +94,7 @@ export default function TVDashboard() {
               </motion.div>
             ))}
           </div>
-          <div className="border-t border-white/5 pt-4 mt-4 flex items-center justify-center gap-4 text-xs text-white/20"><span className="flex items-center gap-1"><Shield className="w-3 h-3 text-emerald-300" />Blockchain Verified</span><span>·</span><span className="flex items-center gap-1"><Globe className="w-3 h-3 text-cyan-300" />Live Global Feed</span><span>·</span><span className="flex items-center gap-1"><Zap className="w-3 h-3 text-amber-300" />Real-Time</span></div>
+          <div className="border-t border-white/5 pt-4 mt-4 flex items-center justify-center gap-4 text-xs text-white/20"><span className="flex items-center gap-1"><Shield className="w-3 h-3 text-emerald-300" />Blockchain Verified</span><span>Â·</span><span className="flex items-center gap-1"><Globe className="w-3 h-3 text-cyan-300" />Live Global Feed</span><span>Â·</span><span className="flex items-center gap-1"><Zap className="w-3 h-3 text-amber-300" />Real-Time</span></div>
         </div>
       </div>
     </div>

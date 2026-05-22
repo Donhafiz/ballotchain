@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { getEarnedBadges, getBadgeColor, type VoterStats } from "@/lib/gamification/badges";
 import { 
   Vote, Clock, CheckCircle2, Eye, ChevronRight, Shield, 
   BarChart3, Calendar, Users, Bell, LogOut, User, Home,
   Fingerprint, Lock, BadgeCheck
-} from "lucide-react";
+, Award, Medal} from "lucide-react";
 
 export default function VoterDashboard() {
   const [mounted, setMounted] = useState(false);
@@ -74,7 +75,7 @@ export default function VoterDashboard() {
         {/* Welcome */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-[28px] font-bold text-white tracking-[-0.03em]">{greeting}, {voter.name.split(" ")[0]} 👋</h1>
+            <h1 className="text-[28px] font-bold text-white tracking-[-0.03em]">{greeting}, {voter.name.split(" ")[0]} ðŸ‘‹</h1>
             <p className="text-[14px] text-[rgba(255,255,255,0.35)] mt-1">Your secure voting dashboard</p>
           </div>
           <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[rgba(79,255,176,0.06)] border border-[rgba(79,255,176,0.12)]">
@@ -135,7 +136,7 @@ export default function VoterDashboard() {
           <div className="lg:col-span-2 bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-[18px] font-bold text-white">Voting History</h2>
-              <Link href="/voter/my-votes" className="text-[12px] font-semibold text-[#4fffb0] hover:underline no-underline">View all →</Link>
+              <Link href="/voter/my-votes" className="text-[12px] font-semibold text-[#4fffb0] hover:underline no-underline">View all â†’</Link>
             </div>
             <div className="space-y-2">
               {votingHistory.map((vote) => (
@@ -145,7 +146,7 @@ export default function VoterDashboard() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-[14px] font-semibold text-white">{vote.election}</div>
-                    <div className="text-[12px] text-[rgba(255,255,255,0.3)]">Voted for {vote.candidate} · {vote.date}</div>
+                    <div className="text-[12px] text-[rgba(255,255,255,0.3)]">Voted for {vote.candidate} Â· {vote.date}</div>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] font-mono text-[rgba(255,255,255,0.2)] hidden sm:block">{vote.receipt}</span>
@@ -154,7 +155,39 @@ export default function VoterDashboard() {
                 </Link>
               ))}
             </div>
+          </div>{/* Badges Section */}
+          <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6">
+            <h2 className="text-[18px] font-bold text-white mb-4 flex items-center gap-2">
+              <Award className="w-5 h-5 text-[#f59e0b]" /> Your Badges
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              {getEarnedBadges({
+                totalVotes: votingHistory.length,
+                consecutiveVotes: 2,
+                verifiedCount: 1,
+                earlyVoter: true,
+                crossElectionVoter: true,
+              }).map((badge) => (
+                <div key={badge.id} className={`flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r ${getBadgeColor(badge.rarity)} bg-opacity-5 border border-white/5`}>
+                  <span className="text-2xl">{badge.icon}</span>
+                  <div>
+                    <div className="text-[13px] font-bold text-white">{badge.name}</div>
+                    <div className="text-[11px] text-white/40">{badge.description}</div>
+                  </div>
+                </div>
+              ))}
+              {getEarnedBadges({
+                totalVotes: votingHistory.length,
+                consecutiveVotes: 2,
+                verifiedCount: 1,
+                earlyVoter: true,
+                crossElectionVoter: true,
+              }).length === 0 && (
+                <p className="text-[13px] text-white/30 col-span-2 text-center py-4">Vote in elections to earn badges!</p>
+              )}
+            </div>
           </div>
+
 
           {/* Security Card */}
           <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6">
