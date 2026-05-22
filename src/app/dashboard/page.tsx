@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -88,7 +88,7 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-[28px] font-bold text-white tracking-[-0.03em]">{greeting}, Admin ðŸ‘‹</h1>
+          <h1 className="text-[28px] font-bold text-white tracking-[-0.03em]">{greeting}, Admin</h1>
           <p className="text-[14px] text-[rgba(255,255,255,0.35)] mt-1">Here is your election overview for today.</p>
         </div>
         <div className="flex items-center gap-3">
@@ -180,7 +180,7 @@ export default function DashboardPage() {
         <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6">
           <div className="flex items-center justify-between mb-5">
             <h3 className="text-[15px] font-bold text-white">Active Elections</h3>
-            <Link href="/dashboard/elections" className="text-[12px] font-semibold text-[#4fffb0] hover:underline no-underline">View all â†’</Link>
+            <Link href="/dashboard/elections" className="text-[12px] font-semibold text-[#4fffb0] hover:underline no-underline">View all ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢</Link>
           </div>
           <div className="space-y-1">
             {activeElections.map((e, i) => (
@@ -190,7 +190,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-[13px] font-semibold text-white truncate">{e.title}</div>
-                  <div className="text-[11px] text-[rgba(255,255,255,0.3)] mt-[2px]">{e.voters.toLocaleString()} voters Â· {e.votes.toLocaleString()} votes</div>
+                  <div className="text-[11px] text-[rgba(255,255,255,0.3)] mt-[2px]">{e.voters.toLocaleString()} voters ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· {e.votes.toLocaleString()} votes</div>
                   {e.turnout > 0 && (
                     <div className="mt-2 flex items-center gap-2">
                       <div className="flex-1 h-[4px] bg-[rgba(255,255,255,0.06)] rounded-full overflow-hidden">
