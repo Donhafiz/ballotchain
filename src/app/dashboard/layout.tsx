@@ -1,15 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { usePathname, useRouter , Shield, Eye} from "next/navigation";
+import { useState, useEffect, useRef , Shield, Eye} from "react";
 import { 
   LayoutDashboard, Vote, Users, Shield, BarChart3, FileText, 
   Building2, Lock, Settings, CreditCard, Webhook, Palette, 
   Heart, ChevronLeft, ChevronRight, Search, Zap, Bell, 
   LogOut, User, ChevronDown, Plus, Home, Menu, X,
   CheckCircle2, AlertTriangle, Clock, Eye
-} from "lucide-react";
+, Shield, Eye} from "lucide-react";
 
 const menuSections = [
   {
@@ -224,7 +224,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <span className="text-[10px] font-bold text-[#4fffb0] uppercase tracking-[0.06em]">3 Live</span>
             </div>
             <button onClick={() => setSearchOpen(true)} className="hidden md:flex items-center gap-2 px-3 py-[6px] rounded-lg bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.06)] text-[11px] text-[rgba(255,255,255,0.3)] hover:border-[rgba(255,255,255,0.12)] hover:text-white transition-all">
-              <Search className="w-3.5 h-3.5" /><span>Search...</span><kbd className="ml-1 px-[5px] py-[2px] rounded-[4px] bg-[rgba(255,255,255,0.06)] text-[10px] text-[rgba(255,255,255,0.2)] font-mono">⌘K</kbd>
+              <Search className="w-3.5 h-3.5" /><span>Search...</span><kbd className="ml-1 px-[5px] py-[2px] rounded-[4px] bg-[rgba(255,255,255,0.06)] text-[10px] text-[rgba(255,255,255,0.2)] font-mono">âŒ˜K</kbd>
             </button>
 
             {/* Notification Bell + Dropdown */}
@@ -252,7 +252,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     ))}
                   </div>
                   <div className="p-3 text-center border-t border-[rgba(255,255,255,0.04)]">
-                    <button className="text-[12px] font-semibold text-[rgba(255,255,255,0.4)] hover:text-white transition-all">View all notifications →</button>
+                    <button className="text-[12px] font-semibold text-[rgba(255,255,255,0.4)] hover:text-white transition-all">View all notifications â†’</button>
                   </div>
                 </div>
               )}
