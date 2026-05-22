@@ -11,7 +11,7 @@ const navLinks = [
   { href: "/#features", label: "Features" },
   { href: "/#trust", label: "Trust" },
   { href: "/verify", label: "Verify" },
-  { href: "/audit", label: "Audit" },
+  { href: "/audit", label: "Audit"},
 ];
 
 const mobileVariants = {
