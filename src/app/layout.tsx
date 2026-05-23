@@ -1,4 +1,5 @@
 ﻿import "./globals.css";
+import "./globals-light.css";
 import ClientProviders from "@/components/layout/ClientProviders";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
