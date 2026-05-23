@@ -10,7 +10,7 @@ import {
   Heart, Mail, ChevronLeft, ChevronRight, Search, Zap, Bell,
   LogOut, User, ChevronDown, Plus, Home, Menu, X, Eye,
   Sparkles, Orbit, ArrowUpRight
-, DollarSign, Brain, Link2} from "lucide-react";
+, DollarSign, Brain, Link2, User, Settings, LogOut, Home, Orbit} from "lucide-react";
 
 const menuSections = [
   {
