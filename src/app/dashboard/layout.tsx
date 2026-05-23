@@ -10,7 +10,7 @@ import {
   Heart, Mail, ChevronLeft, ChevronRight, Search, Zap, Bell,
   LogOut, User, ChevronDown, Plus, Home, Menu, X, Eye,
   Sparkles, Orbit, ArrowUpRight
-, DollarSign} from "lucide-react";
+, DollarSign, Brain, Link2} from "lucide-react";
 
 const menuSections = [
   {
@@ -28,6 +28,7 @@ const menuSections = [
       { icon: BarChart3, label: "Live Results", href: "/dashboard/results" },
       { icon: FileText, label: "Reports", href: "/dashboard/reports" },
       { icon: BarChart3, label: "Analytics", href: "/dashboard/analytics" },
+      { icon: Brain, label: "AI Predictions", href: "/dashboard/predictions" },
     ],
   },
   {
