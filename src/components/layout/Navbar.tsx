@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useRef } from "react";
 import { useTheme } from "@/lib/theme/ThemeContext";
@@ -6,15 +6,9 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Menu, X, Vote, ChevronRight, Sparkles, Orbit, ShieldCheck, Eye, BookOpen, Sun, Moon, Globe,
+  Menu, X, Vote, ChevronRight, Sparkles, Orbit, ShieldCheck, Eye,
+  Sun, Moon, Globe,
 } from "lucide-react";
-
-const navLinks = [
-  { href: "/#features", label: "Features" },
-  { href: "/#trust", label: "Trust" },
-  { href: "/verify", label: "Verify" },
-  { href: "/audit", label: "Audit"},
-];
 
 const mobileVariants = {
   hidden: { opacity: 0, y: -30 },
@@ -27,14 +21,20 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-
 export default function Navbar() {
-  const { theme, toggleTheme } = useTheme();
-  const { language, setLanguage } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const lastScrollY = useRef(0);
+  const { theme, toggleTheme } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
+
+  const navLinks = [
+    { href: "/#features", label: t("features") },
+    { href: "/#trust", label: t("trust") },
+    { href: "/verify", label: t("verify") },
+    { href: "/audit", label: t("audit") },
+  ];
 
   useEffect(() => {
     const onScroll = () => {
@@ -52,6 +52,12 @@ export default function Navbar() {
     return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
 
+  const cycleLanguage = () => {
+    const langs = ["en","tw","ga","ee","ha"];
+    const idx = langs.indexOf(language);
+    setLanguage(langs[(idx + 1) % langs.length] as any);
+  };
+
   return (
     <>
       <motion.header
@@ -60,25 +66,18 @@ export default function Navbar() {
         transition={{ duration: 0.4 }}
         className="fixed inset-x-0 top-0 z-[120] px-4 pt-4 md:px-8"
       >
-        <div
-          className={`mx-auto flex max-w-7xl items-center justify-between rounded-2xl border px-5 py-4 transition-all duration-500 lg:px-7 ${
-            scrolled
-              ? "border-white/10 bg-black/45 shadow-[0_10px_80px_rgba(0,0,0,0.45)] backdrop-blur-3xl"
-              : "border-white/5 bg-white/[0.03] backdrop-blur-2xl"
-          }`}
-        >
+        <div className={`mx-auto flex max-w-7xl items-center justify-between rounded-2xl border px-5 py-4 transition-all duration-500 lg:px-7 ${
+          scrolled
+            ? "border-white/10 bg-black/45 shadow-[0_10px_80px_rgba(0,0,0,0.45)] backdrop-blur-3xl"
+            : "border-white/5 bg-white/[0.03] backdrop-blur-2xl"
+        }`}>
           <Link href="/" className="group relative z-[140] flex items-center gap-4">
-            <motion.div
-              whileHover={{ rotate: 8, scale: 1.06 }}
-              className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-300 via-cyan-300 to-violet-300 shadow-[0_10px_40px_rgba(16,185,129,0.35)]"
-            >
+            <motion.div whileHover={{ rotate: 8, scale: 1.06 }} className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-300 via-cyan-300 to-violet-300 shadow-[0_10px_40px_rgba(16,185,129,0.35)]">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.6),transparent_60%)]" />
               <Orbit className="relative z-10 h-6 w-6 text-black" />
             </motion.div>
             <div>
-              <h1 className="text-xl font-black tracking-[-0.04em] text-white">
-                Ballot<span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">Chain</span>
-              </h1>
+              <h1 className="text-xl font-black tracking-[-0.04em] text-white">Ballot<span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">Chain</span></h1>
               <p className="text-[10px] uppercase tracking-[0.24em] text-white/30">Digital Democracy Infrastructure</p>
             </div>
           </Link>
@@ -87,8 +86,8 @@ export default function Navbar() {
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href} className="group relative overflow-hidden rounded-xl px-4 py-2.5 text-sm font-semibold text-white/50 transition-all duration-300 hover:text-white">
                 <span className="relative z-10 flex items-center gap-1.5">
-                  {link.label === "Verify" && <ShieldCheck className="h-3.5 w-3.5" />}
-                  {link.label === "Audit" && <Eye className="h-3.5 w-3.5" />}
+                  {link.label === t("verify") && <ShieldCheck className="h-3.5 w-3.5" />}
+                  {link.label === t("audit") && <Eye className="h-3.5 w-3.5" />}
                   {link.label}
                 </span>
                 <div className="absolute inset-0 scale-90 rounded-xl bg-gradient-to-r from-emerald-300/10 to-cyan-300/10 opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-100" />
@@ -96,35 +95,30 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="hidden items-center gap-3 lg:flex">
+          <div className="hidden items-center gap-2 lg:flex">
+            <button onClick={cycleLanguage} className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-white/50 hover:text-white hover:border-white/20 transition-all relative" title={`Language: ${language.toUpperCase()}`}>
+              <Globe className="h-4 w-4" />
+              <span className="absolute -bottom-0.5 text-[7px] font-black uppercase">{language}</span>
+            </button>
+            <button onClick={toggleTheme} className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-white/50 hover:text-white hover:border-white/20 transition-all">
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
             <Link href="/vote" className="group flex items-center gap-2 rounded-2xl border border-emerald-300/15 bg-emerald-300/5 px-5 py-3 text-sm font-bold text-emerald-300 transition-all duration-300 hover:border-emerald-300/25 hover:bg-emerald-300/10">
-              <Vote className="h-4 w-4" /> Vote Now
+              <Vote className="h-4 w-4" /> {t("vote")}
             </Link>
-            <Link href="/login" className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-white/65 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.06] hover:text-white">Sign In</Link>
+            <Link href="/login" className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-white/65 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.06] hover:text-white">{t("signin")}</Link>
             <Link href="/register" className="group relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-300 via-cyan-300 to-violet-300 p-[1px]">
-              <div className="flex items-center gap-2 rounded-2xl bg-black px-6 py-3 text-sm font-black text-white transition-all duration-300 group-hover:bg-transparent group-hover:text-black">Get Started <ChevronRight className="h-4 w-4" /></div>
+              <div className="flex items-center gap-2 rounded-2xl bg-black px-6 py-3 text-sm font-black text-white transition-all duration-300 group-hover:bg-transparent group-hover:text-black">{t("started")} <ChevronRight className="h-4 w-4" /></div>
             </Link>
           </div>
 
-                                  <button onClick={() => setLanguage(language === "en" ? "tw" : language === "tw" ? "ga" : language === "ga" ? "ee" : language === "ee" ? "ha" : "en")} className="relative z-[140] flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-white/60 backdrop-blur-2xl transition-all duration-300 hover:border-white/20 hover:text-white" aria-label="Change language" title={`Current: ${language.toUpperCase()}`}>
-              <Globe className="h-5 w-5" />
-              <span className="absolute -bottom-1 text-[8px] font-black uppercase">{language}</span>
-            </button>
-          <button onClick={toggleTheme} className="relative z-[140] flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-white/60 backdrop-blur-2xl transition-all duration-300 hover:border-white/20 hover:text-white mr-2 lg:mr-0 lg:ml-2" aria-label="Toggle theme">
-              {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </button>
-                      <button onClick={() => setLanguage(language === "en" ? "tw" : language === "tw" ? "ga" : language === "ga" ? "ee" : language === "ee" ? "ha" : "en")} className="relative z-[140] flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-white/60 backdrop-blur-2xl transition-all duration-300 hover:border-white/20 hover:text-white" aria-label="Change language" title={`Current: ${language.toUpperCase()}`}>
-              <Globe className="h-5 w-5" />
-              <span className="absolute -bottom-1 text-[8px] font-black uppercase">{language}</span>
-            </button>
-          <button onClick={toggleTheme} className="relative z-[140] flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-white/60 backdrop-blur-2xl transition-all duration-300 hover:border-white/20 hover:text-white mr-1 lg:ml-2" aria-label="Toggle theme">{theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}</button>`n                      <button onClick={() => setLanguage(language === "en" ? "tw" : language === "tw" ? "ga" : language === "ga" ? "ee" : language === "ee" ? "ha" : "en")} className="relative z-[140] flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-white/60 backdrop-blur-2xl transition-all duration-300 hover:border-white/20 hover:text-white" aria-label="Change language" title={`Current: ${language.toUpperCase()}`}>
-              <Globe className="h-5 w-5" />
-              <span className="absolute -bottom-1 text-[8px] font-black uppercase">{language}</span>
-            </button>
-          <button onClick={toggleTheme} className="relative z-[140] flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-white/60 backdrop-blur-2xl transition-all duration-300 hover:border-white/20 hover:text-white mr-1 lg:ml-2" aria-label="Toggle theme">{theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}</button>`n          <button onClick={() => setMobileOpen(!mobileOpen)} className="relative z-[140] flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-white backdrop-blur-2xl transition-all duration-300 hover:border-white/20 lg:hidden" aria-label="Toggle Menu">
+          <button onClick={() => setMobileOpen(!mobileOpen)} className="relative z-[140] flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] text-white backdrop-blur-2xl transition-all duration-300 hover:border-white/20 lg:hidden" aria-label="Toggle Menu">
             <AnimatePresence mode="wait">
-              {mobileOpen ? <motion.div key="close" initial={{ opacity: 0, rotate: -90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: 90 }} transition={{ duration: 0.2 }}><X className="h-5 w-5" /></motion.div>
-               : <motion.div key="menu" initial={{ opacity: 0, rotate: 90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: -90 }} transition={{ duration: 0.2 }}><Menu className="h-5 w-5" /></motion.div>}
+              {mobileOpen ? (
+                <motion.div key="close" initial={{ opacity: 0, rotate: -90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: 90 }} transition={{ duration: 0.2 }}><X className="h-5 w-5" /></motion.div>
+              ) : (
+                <motion.div key="menu" initial={{ opacity: 0, rotate: 90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: -90 }} transition={{ duration: 0.2 }}><Menu className="h-5 w-5" /></motion.div>
+              )}
             </AnimatePresence>
           </button>
         </div>
@@ -148,22 +142,17 @@ export default function Navbar() {
                   {navLinks.map((link, index) => (
                     <motion.div variants={itemVariants} key={index}>
                       <Link href={link.href} onClick={() => setMobileOpen(false)} className="group flex items-center justify-between rounded-2xl border border-white/6 bg-white/[0.03] px-5 py-5 text-lg font-bold text-white/75 transition-all duration-300 hover:border-emerald-300/20 hover:bg-white/[0.06] hover:text-white">
-                        <span className="flex items-center gap-2">{link.label === "Verify" && <ShieldCheck className="h-5 w-5 text-emerald-300" />}{link.label === "Audit" && <Eye className="h-5 w-5 text-cyan-300" />}{link.label}</span>
+                        <span className="flex items-center gap-2">{link.label === t("verify") && <ShieldCheck className="h-5 w-5 text-emerald-300" />}{link.label === t("audit") && <Eye className="h-5 w-5 text-cyan-300" />}{link.label}</span>
                         <ChevronRight className="h-5 w-5 text-emerald-300" />
                       </Link>
                     </motion.div>
                   ))}
-                  <motion.div variants={itemVariants}>
-                    <Link href="/docs" onClick={() => setMobileOpen(false)} className="group flex items-center justify-between rounded-2xl border border-white/6 bg-white/[0.03] px-5 py-5 text-lg font-bold text-white/75 transition-all duration-300 hover:border-violet-300/20 hover:bg-white/[0.06] hover:text-white">
-                      <span className="flex items-center gap-2"><BookOpen className="h-5 w-5 text-violet-300" />Documentation</span><ChevronRight className="h-5 w-5 text-violet-300" />
-                    </Link>
-                  </motion.div>
                 </div>
                 <div className="mt-8 grid gap-4">
-                  <Link href="/register" onClick={() => setMobileOpen(false)} className="group flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-300 via-cyan-300 to-violet-300 px-6 py-5 text-base font-black text-black transition-all duration-300 hover:scale-[1.02]">Get Started <ChevronRight className="h-5 w-5" /></Link>
+                  <Link href="/register" onClick={() => setMobileOpen(false)} className="group flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-300 via-cyan-300 to-violet-300 px-6 py-5 text-base font-black text-black transition-all duration-300 hover:scale-[1.02]">{t("started")} <ChevronRight className="h-5 w-5" /></Link>
                   <div className="grid grid-cols-2 gap-4">
-                    <Link href="/login" onClick={() => setMobileOpen(false)} className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-center text-sm font-bold text-white/70 transition-all duration-300 hover:bg-white/[0.05] hover:text-white">Sign In</Link>
-                    <Link href="/vote" onClick={() => setMobileOpen(false)} className="rounded-2xl border border-emerald-300/15 bg-emerald-300/5 px-5 py-4 text-center text-sm font-black text-emerald-300 transition-all duration-300 hover:bg-emerald-300/10">Vote</Link>
+                    <Link href="/login" onClick={() => setMobileOpen(false)} className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-center text-sm font-bold text-white/70 transition-all duration-300 hover:bg-white/[0.05] hover:text-white">{t("signin")}</Link>
+                    <Link href="/vote" onClick={() => setMobileOpen(false)} className="rounded-2xl border border-emerald-300/15 bg-emerald-300/5 px-5 py-4 text-center text-sm font-black text-emerald-300 transition-all duration-300 hover:bg-emerald-300/10">{t("vote")}</Link>
                   </div>
                 </div>
               </motion.div>

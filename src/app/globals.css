@@ -17,3 +17,35 @@
     font-family: 'Instrument Serif', Georgia, serif;
   }
 }
+[data-theme="light"] {
+  --bg: #f8fafc;
+  --text: #0f172a;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --muted: #64748b;
+}
+
+[data-theme="light"] body {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .bg-\[\#030303\] {
+  background-color: #f8fafc !important;
+}
+
+[data-theme="light"] .bg-\[\#050508\] {
+  background-color: #f8fafc !important;
+}
+
+[data-theme="light"] .bg-black {
+  background-color: #ffffff !important;
+}
+
+[data-theme="light"] .text-white {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .from-emerald-300 {
+  --tw-gradient-from: #059669 !important;
+}
