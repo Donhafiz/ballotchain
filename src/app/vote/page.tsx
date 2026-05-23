@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
-import { Key, ArrowRight, Shield, Smartphone } from "lucide-react";
+import { Key, ArrowRight, Shield, Smartphone , CreditCard} from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
@@ -64,6 +64,13 @@ export default function VoterLoginPage() {
           </div>
         </div>
       </div>
+      
+          <div className="mt-6 pt-6 border-t border-white/5">
+            <p className="text-center text-sm text-white/40 mb-4">or</p>
+            <Link href={`/vote/pay?election=${electionId}&title=Active Election`} className="w-full py-3 rounded-xl border border-emerald-400/15 bg-emerald-400/5 text-emerald-300 text-sm font-bold hover:bg-emerald-400/10 transition-all flex items-center justify-center gap-2">
+              <CreditCard className="h-4 w-4" /> Pay to Vote (MoMo/Card)
+            </Link>
+          </div>
       <Footer />
     </div>
   );

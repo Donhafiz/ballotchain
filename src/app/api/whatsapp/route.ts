@@ -1,67 +1,67 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 
-// WhatsApp Business API webhook
-// Integrate with Twilio for WhatsApp or Meta WhatsApp Cloud API
-
-interface WhatsAppMessage {
-  From: string;
-  Body: string;
-  ProfileName?: string;
-}
-
-// Handle incoming WhatsApp messages
 export async function POST(request: NextRequest) {
-  const formData = await request.formData();
-  const from = formData.get("From") as string;
-  const body = formData.get("Body") as string;
-  const profileName = formData.get("ProfileName") as string;
+  try {
+    const body = await request.json();
+    
+    // Handle WhatsApp message
+    const entry = body?.entry?.[0];
+    const changes = entry?.changes?.[0];
+    const message = changes?.value?.messages?.[0];
+    
+    if (message) {
+      const from = message.from;
+      const text = message.text?.body?.toLowerCase() || "";
+      
+      let reply = "";
+      
+      if (text === "vote" || text === "hi" || text === "hello") {
+        reply = "🗳️ *BallotChain Voting*\n\nReply with:\n*VOTE* - Cast your vote\n*CHECK* - Verify registration\n*RECEIPT* - Verify a receipt\n*HELP* - Get help";
+      } else if (text === "check") {
+        reply = "✅ *Registration Active*\n\nYou are eligible to vote.\nReply *VOTE* to start.";
+      } else if (text === "help") {
+        reply = "*BallotChain Help*\n\n📞 +233 50 123 4567\n📧 support@ballotchain.io\n🌐 ballotchain.io";
+      } else {
+        reply = "Welcome to BallotChain! Reply *VOTE* to start or *HELP* for options.";
+      }
 
-  const message = body?.trim().toLowerCase() || "";
-  let response = "";
+      // Send reply via WhatsApp Cloud API
+      const token = process.env.WHATSAPP_ACCESS_TOKEN;
+      const phoneId = process.env.WHATSAPP_PHONE_ID;
+      
+      if (token && phoneId) {
+        await fetch(`https://graph.facebook.com/v18.0/${phoneId}/messages`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            messaging_product: "whatsapp",
+            to: from,
+            type: "text",
+            text: { body: reply },
+          }),
+        });
+      }
+    }
 
-  // WhatsApp voting flow
-  if (message === "hi" || message === "hello" || message === "vote") {
-    response = `🗳️ *BallotChain Voting*\n\nWelcome ${profileName || "Voter"}!\n\nReply with:\n*VOTE* - Cast your vote\n*CHECK* - Verify registration\n*RECEIPT* - Verify a receipt\n*HELP* - Get help`;
-  } 
-  else if (message === "vote") {
-    response = `*Active Elections:*\n\n1. Student Council 2026\n2. Faculty Senate\n\nReply with the number to vote in that election.`;
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
-  else if (message === "1") {
-    response = `*Student Council 2026*\n*Position:* Student Body President\n\n*Candidates:*\nA. Maya Okonkwo\nB. James Whitfield\nC. Priya Rajan\n\nReply with A, B, or C to vote.`;
-  }
-  else if (message === "a" || message === "b" || message === "c") {
-    const candidates: Record<string, string> = { a: "Maya Okonkwo", b: "James Whitfield", c: "Priya Rajan" };
-    const candidate = candidates[message];
-    const receipt = "BC-" + Math.random().toString(36).substring(2, 10).toUpperCase();
-    response = `✅ *Vote Recorded!*\n\nCandidate: *${candidate}*\nElection: Student Council 2026\nReceipt: *${receipt}*\n\nVerify at: ballotchain.io/verify\n\nThank you for voting! 🗳️`;
-  }
-  else if (message === "check") {
-    response = `✅ *Registration Active*\n\nElection: Student Council 2026\nStatus: Eligible to vote\n\nReply *VOTE* to cast your ballot.`;
-  }
-  else if (message?.startsWith("receipt")) {
-    const code = message.split(" ")[1] || "BC-DEMO123";
-    response = `🔍 *Receipt Verification*\nCode: *${code}*\nStatus: ✅ Verified\nCandidate: Maya Okonkwo\nBlock: #847,291\n\nFull verification: ballotchain.io/verify`;
-  }
-  else if (message === "help") {
-    response = `*BallotChain Help*\n\n📞 +233 50 123 4567\n📧 support@ballotchain.io\n🌐 ballotchain.io\n\nCommands: VOTE, CHECK, RECEIPT [code], HELP`;
-  }
-  else {
-    response = `Welcome to BallotChain! Reply *VOTE* to start or *HELP* for options.`;
-  }
-
-  // Return Twilio-style TwiML response
-  return new NextResponse(
-    `<?xml version="1.0" encoding="UTF-8"?><Response><Message>${response}</Message></Response>`,
-    { headers: { "Content-Type": "text/xml" } }
-  );
 }
 
-// GET for webhook verification
-export async function GET() {
-  return NextResponse.json({
-    service: "BallotChain WhatsApp Bot",
-    status: "active",
-    provider: "Twilio / Meta WhatsApp Cloud API",
-    setup: "Configure webhook URL in your WhatsApp Business provider dashboard",
-  });
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const mode = searchParams.get("hub.mode");
+  const token = searchParams.get("hub.verify_token");
+  const challenge = searchParams.get("hub.challenge");
+  const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || "ballotchain_webhook_verify";
+
+  if (mode === "subscribe" && token === verifyToken) {
+    return new NextResponse(challenge, { status: 200 });
+  }
+
+  return NextResponse.json({ error: "Verification failed" }, { status: 403 });
 }

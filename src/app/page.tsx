@@ -42,17 +42,17 @@ export default function HomePage() {
   const [mounted, setMounted] = useState(false);
   const [liveElections, setLiveElections] = useState<Election[]>([]);
 
-  useEffect(() => { setMounted(true); }, []);
-
   useEffect(() => {
-    const load = async () => {
-      try {
-        const response = await fetch("/api/elections?status=live", { cache: "no-store" });
-        const data = await response.json();
-        if (data?.elections) setLiveElections(data.elections);
-      } catch (error) { console.error(error); }
+    setMounted(true);
+    const load = () => {
+      fetch("/api/elections?status=live", { cache: "no-store" })
+        .then(r => r.json())
+        .then(d => { if (d.elections) setLiveElections(d.elections); })
+        .catch(() => {});
     };
     load();
+    const i = setInterval(load, 30000);
+    return () => clearInterval(i);
   }, []);
 
   const totalVotes = useMemo(() => {

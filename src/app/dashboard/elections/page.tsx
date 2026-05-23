@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Vote, Plus, Search, Play, Pause, Eye, Sparkles, Layers3, Users, Activity, ChevronRight } from "lucide-react";`nimport { PageSkeleton } from "@/components/shared/Skeletons";;
+import { Vote, Plus, Search, Play, Pause, Eye, Sparkles, Layers3, Users, Activity, ChevronRight } from "lucide-react"; 
 
 export default function ElectionsPage() {
   const [elections, setElections] = useState<any[]>([]);
@@ -34,7 +34,7 @@ export default function ElectionsPage() {
     return m && s;
   });
 
-  if (loading) return <PageSkeleton />;
+  if (loading) return <div className="p-8 text-white/40">Loading...</div>;
 
   return (
     <div className="space-y-6">
@@ -45,7 +45,7 @@ export default function ElectionsPage() {
           </div>
           <div>
             <h1 className="text-[28px] font-black tracking-[-0.03em]">Elections</h1>
-            <p className="text-[13px] text-white/35 mt-1">{elections.length} total · {elections.filter(e => e.status === "live").length} live</p>
+            <p className="text-[13px] text-white/35 mt-1">{elections.length} total Ãƒâ€šÃ‚Â· {elections.filter(e => e.status === "live").length} live</p>
           </div>
         </div>
         <Link href="/dashboard/elections/create" className="group relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-300 via-cyan-300 to-violet-300 p-[1px]">

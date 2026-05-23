@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { BarChart3, Vote, Users, TrendingUp, Clock, RefreshCw, Download, Sparkles } from "lucide-react";`nimport { PageSkeleton } from "@/components/shared/Skeletons";;
+import { BarChart3, Vote, Users, TrendingUp, Clock, RefreshCw, Download, Sparkles } from "lucide-react";
 
 export default function ResultsPage() {
   const [mounted, setMounted] = useState(false);
@@ -27,7 +27,7 @@ export default function ResultsPage() {
     });
   };
 
-  if (!mounted) return <PageSkeleton />;
+  if (!mounted) return <div className="p-8 text-white/40">Loading...</div>;
 
   return (
     <div className="space-y-6">

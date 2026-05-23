@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { Users, Search, Upload, Mail, Trash2, CheckCircle2, XCircle, Clock, UserPlus, RefreshCw, AlertTriangle, Filter, Sparkles, ChevronRight } from "lucide-react";`nimport { PageSkeleton } from "@/components/shared/Skeletons";;
+import { Users, Search, Upload, Mail, Trash2, CheckCircle2, XCircle, Clock, UserPlus, RefreshCw, AlertTriangle, Filter, Sparkles, ChevronRight } from "lucide-react"; 
 
 export default function VotersPage() {
   const [mounted, setMounted] = useState(false);
@@ -41,7 +41,7 @@ export default function VotersPage() {
 
   const elections = [...new Set(voters.map(v => v.election).filter(Boolean))];
 
-  if (!mounted) return <PageSkeleton />;
+  if (!mounted) return <div className="p-8 text-white/40">Loading...</div>;
 
   return (
     <div className="space-y-6">
