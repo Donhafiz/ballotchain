@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -243,7 +244,7 @@ export default function PremiumPayToVotePage() {
                     </button>
                   </div>
                   <p className="text-center text-xs text-white/30 mt-3">
-                    GHS {VOTE_PRICE} per vote Â· Total: <span className="text-emerald-300 font-bold">GHS {amount}</span>
+                    GHS {VOTE_PRICE} per vote Ã‚Â· Total: <span className="text-emerald-300 font-bold">GHS {amount}</span>
                   </p>
                 </div>
 

@@ -1,16 +1,8 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import {
-  ArrowUpRight,
-  ShieldCheck,
-  Eye,
-  Lock,
-  Sparkles,
-  ChevronRight,
-  Orbit,
-} from "lucide-react";
+import { ArrowUpRight, ShieldCheck, Eye, Lock, Sparkles, ChevronRight, Orbit, ExternalLink } from "lucide-react";
 
 const footerColumns = [
   {
@@ -20,7 +12,7 @@ const footerColumns = [
       { label: "Results", href: "/results/1" },
       { label: "Voters", href: "/dashboard/voters" },
       { label: "Analytics", href: "/dashboard/analytics" },
-      { label: "API", href: "/docs" },
+      { label: "API", href: "/docs" }, { label: "Live Map", href: "/map" },
     ],
   },
   {

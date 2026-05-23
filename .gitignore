@@ -36,3 +36,5 @@ data/
 # Coverage
 coverage/
 .nyc_output/
+.vercel
+.env*
