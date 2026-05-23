@@ -49,3 +49,4 @@
 [data-theme="light"] .from-emerald-300 {
   --tw-gradient-from: #059669 !important;
 }
+@import "./globals-light.css";

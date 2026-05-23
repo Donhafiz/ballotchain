@@ -96,12 +96,12 @@ export default function Navbar() {
           </div>
 
           <div className="hidden items-center gap-2 lg:flex">
+            <button onClick={toggleTheme} className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-white/50 hover:text-white hover:border-white/20 transition-all">
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
             <button onClick={cycleLanguage} className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-white/50 hover:text-white hover:border-white/20 transition-all relative" title={`Language: ${language.toUpperCase()}`}>
               <Globe className="h-4 w-4" />
               <span className="absolute -bottom-0.5 text-[7px] font-black uppercase">{language}</span>
-            </button>
-            <button onClick={toggleTheme} className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-white/50 hover:text-white hover:border-white/20 transition-all">
-              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
             <Link href="/vote" className="group flex items-center gap-2 rounded-2xl border border-emerald-300/15 bg-emerald-300/5 px-5 py-3 text-sm font-bold text-emerald-300 transition-all duration-300 hover:border-emerald-300/25 hover:bg-emerald-300/10">
               <Vote className="h-4 w-4" /> {t("vote")}

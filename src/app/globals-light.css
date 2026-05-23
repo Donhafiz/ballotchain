@@ -1,0 +1,171 @@
+﻿/* ============ LIGHT MODE - COMPLETE ============ */
+
+[data-theme="light"] {
+  --light-bg: #f8fafc;
+  --light-card: #ffffff;
+  --light-text: #0f172a;
+  --light-muted: #475569;
+  --light-border: #e2e8f0;
+}
+
+/* === BACKGROUNDS === */
+[data-theme="light"] body,
+[data-theme="light"] .min-h-screen {
+  background-color: #f8fafc !important;
+}
+
+[data-theme="light"] .bg-\[\#030303\],
+[data-theme="light"] .bg-\[\#050508\],
+[data-theme="light"] .bg-\[\#0b0c0f\],
+[data-theme="light"] .bg-\[\#020202\],
+[data-theme="light"] .bg-\[\#0a0a0a\] {
+  background-color: #f8fafc !important;
+}
+
+/* === CARDS === */
+[data-theme="light"] [class*="bg-white/["] {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* === TEXT === */
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] h5,
+[data-theme="light"] h6,
+[data-theme="light"] p,
+[data-theme="light"] span:not(.text-emerald-*):not(.text-cyan-*):not(.text-violet-*):not(.text-black):not(.text-\[\#050508\]):not(.text-\[\#0b0c0f\]),
+[data-theme="light"] a:not(.text-emerald-*):not(.text-cyan-*):not(.text-violet-*),
+[data-theme="light"] li,
+[data-theme="light"] div:not(.text-emerald-*):not(.text-cyan-*):not(.text-violet-*):not(.text-black) {
+  color: #0f172a !important;
+}
+
+/* Muted text */
+[data-theme="light"] [class*="text-white/20"],
+[data-theme="light"] [class*="text-white/25"],
+[data-theme="light"] [class*="text-white/30"],
+[data-theme="light"] [class*="text-white/35"],
+[data-theme="light"] [class*="text-white/40"],
+[data-theme="light"] [class*="text-white/45"],
+[data-theme="light"] [class*="text-white/50"] {
+  color: #475569 !important;
+}
+
+/* === ACCENT COLORS (keep visible) === */
+[data-theme="light"] .text-emerald-300,
+[data-theme="light"] .text-\[\#4fffb0\] { color: #059669 !important; }
+[data-theme="light"] .text-cyan-300 { color: #0891b2 !important; }
+[data-theme="light"] .text-violet-300 { color: #7c3aed !important; }
+[data-theme="light"] .text-amber-300 { color: #d97706 !important; }
+[data-theme="light"] .text-red-400 { color: #dc2626 !important; }
+
+/* === PRESERVE BLACK TEXT === */
+[data-theme="light"] .text-black,
+[data-theme="light"] .text-\[\#050508\],
+[data-theme="light"] .text-\[\#0b0c0f\] {
+  color: #000000 !important;
+}
+
+/* === PRESERVE GRADIENT TEXT === */
+[data-theme="light"] .bg-clip-text {
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+/* === BORDERS === */
+[data-theme="light"] [class*="border-white/"] {
+  border-color: #e2e8f0 !important;
+}
+
+/* === NAVBAR GLASS === */
+[data-theme="light"] [class*="backdrop-blur"] {
+  background-color: rgba(255,255,255,0.85) !important;
+}
+
+/* === BUTTONS === */
+[data-theme="light"] .bg-black {
+  background-color: #0f172a !important;
+}
+
+[data-theme="light"] .group-hover\:bg-transparent:hover {
+  background-color: transparent !important;
+}
+
+/* === SHADOWS === */
+[data-theme="light"] [class*="shadow-\[0_"] {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06) !important;
+}
+/* === FOOTER TEXT === */
+[data-theme="light"] footer h2,
+[data-theme="light"] footer p,
+[data-theme="light"] footer span,
+[data-theme="light"] footer a,
+[data-theme="light"] footer .text-white\/85 {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] footer .text-white\/45,
+[data-theme="light"] footer .text-white\/35,
+[data-theme="light"] footer .text-white\/30 {
+  color: #475569 !important;
+}
+
+/* === TRUST CARDS IN FOOTER === */
+[data-theme="light"] .rounded-3xl.border.border-white\/6.bg-black\/20 p-5 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .rounded-3xl.border.border-white\/6.bg-black\/20 p-5 p,
+[data-theme="light"] .rounded-3xl.border.border-white\/6.bg-black\/20 p-5 span {
+  color: #0f172a !important;
+}
+
+/* === FEATURES SECTION === */
+[data-theme="light"] #features h2,
+[data-theme="light"] #features p,
+[data-theme="light"] #features span {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #features .text-white\/60,
+[data-theme="light"] #features .text-white\/50 {
+  color: #475569 !important;
+}
+
+/* === FEATURE CARDS === */
+[data-theme="light"] .rounded-\[32px\].border.border-white\/6 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .rounded-\[32px\].border.border-white\/6 h3,
+[data-theme="light"] .rounded-\[32px\].border.border-white\/6 p {
+  color: #0f172a !important;
+}
+
+/* === NAVBAR TEXT IN LIGHT MODE === */
+[data-theme="light"] .text-white\/50,
+[data-theme="light"] .text-white\/65,
+[data-theme="light"] .text-white\/70 {
+  color: #475569 !important;
+}
+
+/* === SIGN IN BUTTON === */
+[data-theme="light"] .rounded-2xl.border.border-white\/10.bg-white\/\[0\.03\] {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .rounded-2xl.border.border-white\/10.bg-white\/\[0\.03\]:hover {
+  background-color: #f1f5f9 !important;
+}
+
+/* === ENTERPRISE INFRASTRUCTURE BADGE === */
+[data-theme="light"] .inline-flex.items-center.gap-2.rounded-full.border {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
